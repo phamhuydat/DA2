@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none"
+	  data-preloader="disable">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="shortcut icon" href="~/edu.ico">
+	<title>@ViewBag.Title</title>
+
+	<!-- Google Font: Source Sans Pro -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<!-- Font Awesome -->
+	<link href="~/assets/libs/fullcalendar/main.min.css" rel="stylesheet" asp-append-version="true" />
+
+	<!-- Layout config Js -->
+	<script src="~/assets/js/layout.js"></script>
+	<!-- Bootstrap Css -->
+	<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+	<!-- Icons Css -->
+	<link href="~/assets/css/icons.min.css" rel="stylesheet" asp-append-version="true" />
+	<!-- App Css-->
+	<link href="~/assets/css/app.min.css" rel="stylesheet" asp-append-version="true" />
+	<!-- custom Css-->
+	<link href="~/assets/css/custom.min.css" rel="stylesheet" asp-append-version="true" />
+
+	@RenderSection("head", false)
+</head>
+<body>
+	<!-- Site wrapper -->
+	<div id="layout-wrapper">
+
+		<partial name="_HeaderBar" />
+
+		<vc:main-nav-bar></vc:main-nav-bar>
+
+		<!-- ============================================================== -->
+		<!-- Start right Content here -->
+		<!-- ============================================================== -->
+		<div class="main-content">
+			<!-- Main content -->
+			<div class="page-content">
+				<partial name="_Noti" />
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12">
+							<div class="page-title-box d-sm-flex align-items-center justify-content-between">
+								<h4 class="mb-sm-0">User</h4>
+
+								<div class="page-title-right">
+									<ol class="breadcrumb m-0">
+										<li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+										<li class="breadcrumb-item active">Listjs</li>
+									</ol>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					@RenderBody()
+				</div>
+
+			</div>
+
+		</div>
+		<!-- /.content-wrapper -->
+
+	</div>
+	@await Component.InvokeAsync("Notyf")
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+	<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+	<script src="~/assets/libs/node-waves/waves.min.js"></script>
+	<script src="~/assets/libs/feather-icons/feather.min.js"></script>
+	<script src="~/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+	<script src="~/assets/js/plugins.js"></script>
+
+	<!-- apexcharts -->
+	<script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+
+	<!-- Vector map-->
+	<script src="~/assets/libs/jsvectormap/js/jsvectormap.min.js"></script>
+	<script src="~/assets/libs/jsvectormap/maps/world-merc.js"></script>
+
+	<!-- App js -->
+
+    <script src="~/lib/awesome-notifications/index.var.js"></script>
+    <script src="~/lib/awesome-notifications/index.var.min.js"></script>
+
+	<!-- Javascript dùng chung -->
+	<script src="~/assets/js/site.js" asp-append-version="true"></script>
+
+	@RenderSection("scripts", false)
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vi.js"></script>
+
+	<script src="~/assets/js/app.js"></script>
+	<script>
+		flatpickr("#datepicker", {
+			locale: "vi",
+			dateFormat: "d-m-Y",
+		});
+	</script>
+</body>
+</html>

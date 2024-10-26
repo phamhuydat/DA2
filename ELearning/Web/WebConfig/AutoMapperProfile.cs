@@ -19,7 +19,6 @@ namespace Web.WebConfig
             CreateMap<Users, AcceptUpdateViewModel>().ReverseMap();
 
             // map dl từ UserAddOrEditVM xang User
-
             CreateMap<UserAddOrEditVM, Users>().ReverseMap();
 
         }

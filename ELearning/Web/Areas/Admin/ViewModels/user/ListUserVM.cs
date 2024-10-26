@@ -11,6 +11,7 @@ namespace Web.Areas.Admin.ViewModels.user
         public string RoleName { get; set; }
         public string Email { get; set; }
         public DateTime? BlockedTo { get; set; }
+        public int AppRoleId { get; set; }
 
         public bool IsBlock
         {

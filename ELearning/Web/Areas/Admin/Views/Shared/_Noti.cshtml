@@ -15,10 +15,21 @@ else if (TempData["Success"] != null)
 
 @if (!typeOfMesg.IsNullOrEmpty())
 {
-	<div class="alert alert-@typeOfMesg alert-dismissible js-alert fade show" role="alert">
-		@mesg
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
+	@if (typeOfMesg == "success")
+	{
+		<div class="alert alert-success alert-dismissible alert-label-icon rounded-label fade show mb-0" role="alert">
+			<i class="ri-check-double-line label-icon"></i><strong>Thành công</strong>
+			- @mesg
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+
+	}
+	else
+	{
+		<div class="alert alert-danger alert-dismissible alert-label-icon rounded-label fade show mb-0" role="alert">
+			<i class="ri-alert-line label-icon"></i><strong>Thất bại</strong>
+			- @mesg
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	}
 }

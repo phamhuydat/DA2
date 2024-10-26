@@ -71,7 +71,7 @@ namespace Web.WebConfig
             {
                 config.DurationInSeconds = 10;
                 config.IsDismissable = true;
-                config.Position = NotyfPosition.BottomRight;
+                config.Position = NotyfPosition.TopRight;
             });
 
             services.AddHttpContextAccessor();

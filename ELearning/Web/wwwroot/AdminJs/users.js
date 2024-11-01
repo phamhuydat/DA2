@@ -2,6 +2,7 @@
     Alpine.data("users", () => ({
         _list: [],
         _modal: {},
+        activeTab: '#btabs-static-home',
         _noti: {},
         _modalSetting: {
             title: "",
@@ -22,6 +23,7 @@
             isBlock: "",
             AppRoleId: ""
         },
+
         init() {
             var config = {
                 durations: {
@@ -31,11 +33,12 @@
                     success: "Thành công"
                 }
             };
+
             this._modal = new bootstrap.Modal("#showModal");
-            //this._noti = new AWN(config);
 
             this.refreshData();
         },
+
         async refreshData() {
             fetch("/Admin/User/ListItem")
                 .then(x => x.json())
@@ -46,6 +49,7 @@
                     console.log(err);
                 });
         },
+
         CheckIsBlock(date) {
             var now = Date.now();
             if (date && date > now) {
@@ -72,7 +76,7 @@
             this._modal.show();
             this._modalSetting = {
                 title: "Thêm người dùng",
-                url: "/Admin/User/Create",
+                url: "/Admin/User/CreateUser",
                 primaryButtonText: "Thêm người dùng"
             };
             // Xóa dữ liệu khi mở modal add
@@ -103,6 +107,7 @@
                     this._updinData = json
                 });
         },
+
         saveCategory() {
             fetch(this._modalSetting.url, {
                 method: "POST",
@@ -111,18 +116,25 @@
                 },
                 body: JSON.stringify(this._updinData)
             })
+
                 .then(res => {
-                    this._modal.hide();
-                    return res.text();
+                    return res.json();
                 })
-                .then(text => {
-                    this._noti.success(text);
-                    this.refreshData();
+                .then(data => {
+                    console.log(data.data);
+                    if (data.success) {
+                        Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: text.message });
+                        this.refreshData();
+                    }
+                    else {
+                        Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: text.message });
+                    }
                 })
                 .catch(err => {
-                    alert("Lỗi rồi!");
+                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: `Thêm người không thành công!` });
                 })
         },
+
         removeCategory(id) {
             var url = "/Admin/User/Delete/" + id;
 

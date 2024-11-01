@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Entities;
 using Web.Areas.Admin.ViewModels.Account;
+using Web.Areas.Admin.ViewModels.QuestionVM;
 using Web.Areas.Admin.ViewModels.Role;
 using Web.Areas.Admin.ViewModels.user;
 using Web.ViewModels.Account;
@@ -54,7 +55,14 @@ namespace Web.WebConfig
         });
 
 
-
+        // Cấu hình mapping cho QuestionController, action Index AppQuestion xang ListQuestionVM
+        public static MapperConfiguration QuestionIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Question, ListQuestionVM>()
+                .ForMember(qItem => qItem.SubjectName, opts => opts.MapFrom(qEntity => qEntity.subject.SubjectName))
+                .ForMember(qItem => qItem.ChapterName, opts => opts.MapFrom(qEntity => qEntity.chapter.ChapterName))
+                .ForMember(qItem => qItem.Answers, opts => opts.MapFrom(qEntity => qEntity.answers)).ReverseMap();
+        });
 
 
 

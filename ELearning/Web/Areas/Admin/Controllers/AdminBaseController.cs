@@ -13,7 +13,7 @@ using X.PagedList;
 namespace App.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(AuthenticationSchemes = AppConst.ADMIN_COOKIES_AUTH)]
+    [Authorize(AuthenticationSchemes = AppConst.ADMIN_COOKIES_AUTH)]
     public class AdminBaseController : Controller
     {
         protected const string AREA_NAME = "Admin";

@@ -19,10 +19,10 @@ namespace Web.Areas.Admin.ViewModels.user
 		[AppStringLength(VM.UserVM.PWD_MINLEN, DB.AppUser.PWD_LENGTH)]
 		public string Password { get; set; }
 
-		[AppRequired]
-		[AppConfirmPwd]
-		[DataType(DataType.Password)]
-		public string ConfirmPwd { get; set; }
+		//[AppRequired]
+		//[AppConfirmPwd]
+		//[DataType(DataType.Password)]
+		//public string ConfirmPwd { get; set; }
 
 		[AppRequired]
 		public string FullName { get; set; }

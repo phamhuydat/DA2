@@ -11,17 +11,17 @@
         },
         _updinData: {
             id: 0,
-            mssv: "",
+            mSSV: "",
             fullName: "",
             gender: "",
             birthday: "",
             email: "",
             phone: "",
             password: "",
-            roleName: "",
+            //roleName: "",
             blockedTo: "",
-            isBlock: "",
-            AppRoleId: ""
+            //isBlock: "",
+            appRoleId: ""
         },
 
         init() {
@@ -82,14 +82,14 @@
             // Xóa dữ liệu khi mở modal add
             this._updinData = {
                 id: 0,
-                mssv: "",
+                mSSV: "",
                 fullName: "",
                 gender: "",
                 birthday: "",
                 email: "",
                 phone: "",
                 password: "",
-                AppRoleId: ""
+                appRoleId: ""
             };
         },
         openModalUpdate(id) {
@@ -121,13 +121,13 @@
                     return res.json();
                 })
                 .then(data => {
-                    console.log(data.data);
+                    console.log(data);
                     if (data.success) {
-                        Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: text.message });
+                        Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: data.message });
                         this.refreshData();
                     }
                     else {
-                        Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: text.message });
+                        Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: data.message });
                     }
                 })
                 .catch(err => {
@@ -158,8 +158,5 @@
                     document.querySelector('#roleSelect').innerHTML = html;
                 });
         }
-
-
-
     }))
 });

@@ -1,6 +1,4 @@
-﻿@model IEnumerable<Web.Areas.Admin.ViewModels.user.ListUserVM>;
-
-@{
+﻿@{
     ViewBag.Title = "Danh sách người dùng";
 }
 @section head{
@@ -58,8 +56,7 @@
 @section scripts {
     <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>
 
-    @* <script src="~/assets/js/pages/form-pickers.init.js"></script>   *@
-    <script src="~/js/dashmix.app.min.js"></script>
+    <script src="~/js/dashmix.app.min.js"></script>         
     <script src="~/js/pages/user.js" asp-append-version="true"></script>
     <script src="~/AdminJs/users.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
@@ -73,7 +70,8 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title mb-0">Danh sách người dùng</h4>
-                </div><!-- end card header -->
+                </div>
+                <!-- end card header -->
 
                 <div class="card-body">
                     <div id="customerList">
@@ -113,7 +111,6 @@
                                                        id="checkAll" value="option">
                                             </div>
                                         </th>
-
                                         <th >MSSV</th>
                                         <th >Họ tên</th>
                                         <th >Giới tính</th>
@@ -122,7 +119,7 @@
                                         <th >Trạng thái</th>
                                         <th >Hoạt động</th>
                                     </tr>
-                                </thead>
+                                </thead >
                                 <tbody class="list form-check-all">
                                     <template x-for="item in _list">
                                         <tr>

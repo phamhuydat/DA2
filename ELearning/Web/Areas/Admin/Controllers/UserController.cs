@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Share.Consts;
 using Web.Areas.Admin.ViewModels.user;
 using Web.Common;
+
 using Web.WebConfig;
 
 
@@ -76,6 +77,10 @@ namespace Web.Areas.Admin.Controllers
             {
                 model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
                 var user = _mapper.Map<Users>(model);
+                user.CreatedBy = this.CurrentUserId;
+                user.CreatedDate = DateTime.Now;
+                user.UpdatedBy = this.CurrentUserId;
+                user.UpdatedDate = DateTime.Now;
                 await _repo.AddAsync(user);
 
                 return Ok(new
@@ -144,6 +149,8 @@ namespace Web.Areas.Admin.Controllers
             await _repo.UpdateAsync(userData);
 
             _mapper.Map(model, oldUsers);
+            oldUsers.UpdatedBy = this.CurrentUserId;
+            oldUsers.UpdatedDate = DateTime.Now;
             await _repo.UpdateAsync(oldUsers);
 
             return RedirectToAction("Index");

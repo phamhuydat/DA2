@@ -12,10 +12,11 @@ namespace Data.Entities
             Chapters = new HashSet<Chapter>();
         }
 
+        public string SubjectCode { get; set; }
         public string SubjectName { get; set; }
         public int Credit { get; set; } // số tín chỉ
-        public int TheoryCredits { get; set; } // chỉ lý thuyết
-        public int PracticeCredits { get; set; } // chỉ thực hành
+        public int NumTheory { get; set; } // số tiết lý thuyết
+        public int NumPractice { get; set; } // số tiết thực hành
         public bool Status { get; set; }
 
         //fk

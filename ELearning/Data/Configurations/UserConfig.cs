@@ -22,7 +22,7 @@ namespace Data.Configurations
             // Tên đăng nhập là varchar, bắt buộc & không trùng lặp
             builder.Property(m => m.FullName)
                 .HasMaxLength(DB.AppUser.USERNAME_LENGTH)
-                .IsUnicode(false);   // varchar (không chứa unicode)
+                .IsRequired();
 
             builder.Property(m => m.Avatar)
                 .HasMaxLength(DB.AppUser.AVATAR_LENGTH);

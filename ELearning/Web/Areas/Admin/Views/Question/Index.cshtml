@@ -1,22 +1,25 @@
-﻿@model IEnumerable<Web.Areas.Admin.ViewModels.QuestionVM.ListQuestionVM>
-
-@{
+﻿@{
     ViewBag.Title = "Danh sách câu hỏi";
-
+}
+@section head {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css">
 }
 
 @section scripts {
     <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>
-    @* <script src="~/assets/js/pages/form-pickers.init.js"></script>   *@
     <script src="~/js/dashmix.app.min.js"></script>
-    <script src="~/js/pages/user.js" asp-append-version="true"></script>
+    <script src="~/js/plugins/select2/js/select2.full.min.js"></script>
+    <script src="~/js/plugins/ckeditor/ckeditor.js"></script>
     <script src="~/AdminJs/question.js" asp-append-version="true"></script>
+    <script src="~/js/pages/question.js"></script>
+
     <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js"></script>
-
 }
 
-<div x-data="question">
+
+
+<div x-data="questions">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -30,7 +33,7 @@
                             <div class="col-sm-auto">
                                 <div>
                                     <button type="button" class="btn btn-primary add-btn"
-                                            x-on:click="OpenModelAdd()">
+                                            x-on:click="OpenModalAdd()">
                                         <i class="ri-add-line align-bottom me-1"></i> Thêm câu hỏi
                                     </button>
                                     <button class="btn btn-soft-danger"
@@ -62,11 +65,9 @@
                                                        id="checkAll" value="option">
                                             </div>
                                         </th>
-
                                         <th>Id</th>
-                                        <th>Nội dung câu hỏi</th>
+                                        <th width="650px">Nội dung câu hỏi</th>
                                         <th>Tên môn học</th>
-                                        <th>Tên chương</th>
                                         <th>Độ khó</th>
                                         <th>Hoạt động</th>
                                     </tr>
@@ -80,29 +81,21 @@
                                                            name="chk_child" value="option1">
                                                 </div>
                                             </th>
-                                            <td class="id" style="display:none;">
-                                                <a class="fw-medium link-primary" x-text="item.id"></a>
-                                            </td>
-                                            <td class="id_student" x-text="item.mssv"></td>
-                                            <td class="email">
-                                                <div class="d-flex flex-column">
-                                                    <strong class="text-primary" x-text="item.fullName">
-
-                                                    </strong>
-                                                    <p x-text="item.email"></p>
-                                                </div>
-                                            </td>
+                                            <td class="id_student" x-text="item.rowIndex"></td>
+                                            <td class="content" x-html="item.content"></td>
+                                            <td class="subject" x-text="item.subjectName"></td>
+                                            <td class="subject" x-text="item.level"></td>
                                             <td>
                                                 <div class="d-flex gap-2">
                                                     <div class="edit">
                                                         <a class="btn btn-sm edit-item-btn link-primary fs-15"
-                                                           x-on:click="openModalUpdate(item.id)">
+                                                           x-on:click="OpenModalEdit(item.id)">
                                                             <i class="ri-edit-2-line"></i>
                                                         </a>
                                                     </div>
                                                     <div class="remove">
                                                         <a class="btn btn-sm remove-item-btn link-danger fs-15"
-                                                           data-bs-toggle="modal" data-bs-target="#deleteRecordModal">
+                                                           x-on:click="DeleteQuestion(item.id)">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </a>
                                                     </div>
@@ -124,10 +117,9 @@
                                     </p>
                                 </div>
                             </div>
-
                         </div>
 
-                        <partial name="_pagedList" />
+                        @* <partial name="_pagedList" /> *@
                     </div>
                 </div><!-- end card -->
             </div>
@@ -138,6 +130,5 @@
     <!-- end row -->
 
     <partial name="_modalUpSert" model="null" />
-
 
 </div>

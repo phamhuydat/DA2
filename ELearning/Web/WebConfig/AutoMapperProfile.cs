@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Data.Entities;
 using Web.Areas.Admin.ViewModels.Account;
+using Web.Areas.Admin.ViewModels.AnswerVM;
+using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
 using Web.Areas.Admin.ViewModels.Role;
+using Web.Areas.Admin.ViewModels.SubjectVM;
 using Web.Areas.Admin.ViewModels.user;
 using Web.ViewModels.Account;
 
@@ -21,6 +24,23 @@ namespace Web.WebConfig
 
             // map dl từ UserAddOrEditVM xang User
             CreateMap<UserAddOrEditVM, Users>().ReverseMap();
+
+            //map dl từ subjectUpsertVM xang subject
+            CreateMap<SubjectAddOrUpdateVM, Subject>().ReverseMap();
+
+
+            //map dl từ chapterUpsertVM xang chapter
+            CreateMap<ChapterAddOrEditVM, Chapter>().ReverseMap();
+
+
+
+            // Map dữ liệu từ AnswerAddOrEdit sang Answer
+            CreateMap<AnswerAddOrEdit, Answer>().ReverseMap();
+
+            // map dữ liệu QuestionAddOrEditVM sang Question
+            CreateMap<QuestionAddOrEditVM, Question>()
+                .ForMember(q => q.answers, opts => opts.MapFrom(qVM => qVM.Options))
+                .ReverseMap();
 
         }
 
@@ -64,7 +84,23 @@ namespace Web.WebConfig
                 .ForMember(qItem => qItem.Answers, opts => opts.MapFrom(qEntity => qEntity.answers)).ReverseMap();
         });
 
+        // Cấu hình mapping cho SubjectController, action Index
 
+        public static MapperConfiguration SubjectIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Subject, ListSubjectVM>().ReverseMap();
+        });
 
+        // Cấu hình mapping cho ChapterController, action Index
+        public static MapperConfiguration ChapterIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Chapter, ListChapterVM>().ReverseMap();
+        });
+
+        // Cấu hình mapping cho AnswerController, action Index
+        public static MapperConfiguration AnswerIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Answer, AnswerAddOrEdit>().ReverseMap();
+        });
     }
 }

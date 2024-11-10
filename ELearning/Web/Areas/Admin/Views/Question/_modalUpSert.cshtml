@@ -1,13 +1,13 @@
 ﻿<div class="modal fade" id="modal-add-question" tabindex="-1" role="dialog" aria-labelledby="modal-add-question"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-dialog  modal-lg" role="document">
         <div class="modal-content">
             <ul class="nav nav-tabs nav-tabs-alt mb-1" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" id="btabs-alt-static-home-tab" data-bs-toggle="tab"
                             data-bs-target="#btabs-alt-static-home" role="tab" aria-controls="btabs-alt-static-home"
-                            aria-selected="true">
-                        Thêm thủ công
+                            aria-selected="true"
+                            x-text="_modalSetting.title">
                     </button>
                 </li>
                 <li class="nav-item">
@@ -25,24 +25,41 @@
                 <div class="block-content tab-content">
                     <div class="tab-pane active" id="btabs-alt-static-home" role="tabpanel"
                          aria-labelledby="btabs-static-home-tab" tabindex="0">
-                        <form id="form_add_question" onsubmit="return false;">
+
+                        <form id="form_add_question">
+                            <input type="hidden" x-model="_updinData.id" name="id">
                             <div class="mb-4">
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="" class="form-label">Môn học</label>
-                                        <select class="js-select2 form-select data-monhoc" data-tab="1" id="mon-hoc"
-                                                name="mon-hoc" style="width: 100%;" data-placeholder="Choose one..">
+                                        <label class="form-label">Môn học</label>
+                                        <select class="form-select"
+                                                x-model="_updinData.subjectId"
+                                                id="mon-hoc"
+                                                name="chuong"
+                                                @@change="LoadChapter()" style="width: 100%;">
+                                            <option value="" x-text="_updinData.subjectName" disabled selected>Choose one...</option>
+                                            <template x-for="item in _listSubject">
+                                                <option :value="item.id" x-text="item.subjectName"></option>
+                                            </template>
                                         </select>
                                     </div>
                                     <div class="col-4">
                                         <label class="form-label">Chương</label>
-                                        <select class="js-select2 form-select data-chuong" id="chuong" name="chuong"
-                                                data-tab="1" style="width: 100%;" data-placeholder="Choose one..">
+                                        <select class="form-select"
+                                                x-model="_updinData.chapterId"
+                                                style="width: 100%;"
+                                                id="chuong"
+                                                name="chuong">
+                                            <option value="" x-text="_updinData.chapterName" disabled selected>Choose one...</option>
+                                            <template x-for="item in _listChapter">
+                                                <option :value="item.id" x-text="item.chapterName"></option>
+                                            </template>
                                         </select>
+
                                     </div>
                                     <div class="col-4">
                                         <label class="form-label">Độ khó</label>
-                                        <select class="js-select2 form-select" id="dokho" name="dokho"
+                                        <select class="form-select" x-model="_updinData.level" name="level"
                                                 style="width: 100%;" data-placeholder="Choose one..">
                                             <option></option>
                                             <option value="1">Cơ bản</option>
@@ -54,56 +71,94 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label" for="js-ckeditor">Nội dung câu hỏi</label>
-                                <textarea id="js-ckeditor" name="js-ckeditor"></textarea>
+                                <textarea id="js-ckeditor" name="js-ckeditor" x-model="_updinData.content"></textarea>
                             </div>
+
                             <div class="mb-4 row">
                                 <h6>Danh sách đáp án</h6>
                                 <div class="table-responsive">
                                     <table class="table table-vcenter">
-                                        <tbody id="list-options">
+                                        <tbody>
+                                            <template x-for="(item, index) in _updinData.options">
+                                                <tr>
+                                                    <td class="text-center" scope="row" x-text="item.rowIndex"></td>
+                                                    <td x-html="item.answersContent"> </td>
+                                                    <td class="d-none d-sm-table-cell">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                   name="da-dung"
+                                                                   :id="'da-' + item.rowIndex"
+                                                                   :value="item.rowIndex"
+                                                                   x-model="item.status"
+                                                                   x-bind:checked="item.status">
+                                                            <label class="form-check-label" x-model="item.id">
+                                                                đáp án đúng
+                                                            </label>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="text-center">
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn btn-sm btn-alt-secondary btn-edit-option"
+                                                                     title="edit"
+                                                                    x-on:click="EditAnswer(index)">
+                                                                <i class="ri-edit-2-line"></i>
+
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-alt-secondary btn-delete-option"
+                                                                     title="delete"
+                                                                    x-on:click="DeleteAnswer(index)">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
                                 <p>
-                                    <button class="btn btn-hero btn-primary" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#add_option" aria-expanded="false" aria-controls="add_option">
-                                        Thêm câu trả lời <i class="fa fa-fw fa-angle-down opacity-50"></i>
+                                    <button class="btn btn-hero btn-primary" type="button"
+                                            x-on:click="OpenAddAnswer()">
+                                        Thêm câu trả lời
+                                        <i class="fa fa-fw fa-angle-down opacity-50"></i>
                                     </button>
                                 </p>
-                                <div class="collapse" id="add_option">
+                                <div :class="open ? 'collapse show': 'collapse'" id="add_option">
                                     <div class="card card-body">
+                                        <input type="hidden" x-model="_answer.id" name="id">
                                         <label class="form-label" for="option-content">Nội dung trả lời</label>
-                                        <textarea id="option-content" name="option-content"></textarea>
+                                        <textarea id="option-content" name="option-content" x-model="_answer.content"></textarea>
                                         <div class="form-check mt-4">
-                                            <input class="form-check-input" type="checkbox" value="" id="true-option">
+                                            <input class="form-check-input" x-model="_answer.status"
+                                                   type="checkbox" value="" id="true-option">
                                             <label class="form-check-label" for="true-option">
                                                 Đáp án đúng
                                             </label>
                                         </div>
                                         <p>
-                                            <button type="button" class="btn btn-primary mt-3" id="save-option">
-                                                Lưu câu
-                                                trả lời
+                                            <button type="button" class="btn btn-primary mt-3"
+                                                    x-on:click="AddOrEditAnswer()">
+                                                    Lưu đáp án
                                             </button>
-                                            <button type="button" class="btn btn-primary mt-3" id="update-option">
-                                                Cập
-                                                nhật câu trả lời
+
+                                            <button type="button" class="btn btn-danger mt-3" x-on:click="CloseAnswer()">
+                                                Huỷ
                                             </button>
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <button type="submit" class="btn btn-alt-primary" id="add_question">
-                                    <i class="fa fa-fw fa-plus me-1"></i> Lưu câu hỏi
+                                <button type="button" class="btn btn-soft-primary"
+                                        x-on:click="SaveQuestion()">
+                                    <i class="ri-add-line align-bottom me-1"></i>
+                                    Lưu câu hỏi
                                 </button>
-                                <button class="btn btn-alt-primary" id="edit_question">
-                                    <i class="fa fa-fw fa-plus me-1"></i> Sửa câu hỏi
-                                </button>
-                                <input type="hidden" value="" id="question_id">
                             </div>
                         </form>
                     </div>
+                    <!--Thêm bằng Word or Ex-->
                     <div class="tab-pane" id="btabs-alt-static-profile" role="tabpanel"
                          aria-labelledby="btabs-static-profile-tab" tabindex="0">
                         <form id="form-upload" method="POST" enctype="multipart/form-data">

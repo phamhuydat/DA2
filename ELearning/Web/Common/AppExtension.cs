@@ -2,7 +2,9 @@
 using Share.Consts;
 using Share.Extensions;
 using System.Security.Claims;
+using Web.Areas.Admin.ViewModels;
 using Web.WebConfig;
+using X.PagedList;
 //using App.Web.Areas.Admin.ViewModels;
 
 namespace Web.Common
@@ -10,16 +12,16 @@ namespace Web.Common
     public static class AppExtension
     {
         // Tạo số thứ tự từ PagedList
-        //public static IPagedList<TModel> GenRowIndex<TModel>(this IPagedList<TModel> list) where TModel : ListItemBaseVM
-        //{
-        //    var pageSize = list.PageSize;
-        //    var currentPage = list.PageNumber;
-        //    for (int i = 0; i < list.Count; i++)
-        //    {
-        //        list[i].RowIndex = (currentPage - 1) * pageSize + i + 1;
-        //    }
-        //    return list;
-        //}
+        public static IPagedList<TModel> GenRowIndex<TModel>(this IPagedList<TModel> list) where TModel : ListItemBaseVM
+        {
+            var pageSize = list.PageSize;
+            var currentPage = list.PageNumber;
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].RowIndex = (currentPage - 1) * pageSize + i + 1;
+            }
+            return list;
+        }
 
         public static string GetCurrentActionName(this ViewContext viewContext)
         {

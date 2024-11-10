@@ -61,6 +61,7 @@ namespace Web.Areas.Admin.Controllers
 
             var claimsIdentity = new ClaimsIdentity(claims, AppConst.ADMIN_COOKIES_AUTH);
             var principal = new ClaimsPrincipal(claimsIdentity);
+
             var authenPropeties = new AuthenticationProperties()
             {
                 ExpiresUtc = DateTime.UtcNow.AddHours(AppConst.LOGIN_TIMEOUT),

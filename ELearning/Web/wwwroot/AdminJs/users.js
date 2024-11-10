@@ -18,9 +18,7 @@
             email: "",
             phone: "",
             password: "",
-            //roleName: "",
             blockedTo: "",
-            //isBlock: "",
             appRoleId: ""
         },
 
@@ -109,6 +107,7 @@
         },
 
         saveCategory() {
+            console.log(this._updinData);
             fetch(this._modalSetting.url, {
                 method: "POST",
                 headers: {

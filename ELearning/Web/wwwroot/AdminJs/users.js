@@ -11,7 +11,7 @@
         },
         _updinData: {
             id: 0,
-            mSSV: "",
+            mssv: "",
             fullName: "",
             gender: "",
             birthday: "",
@@ -90,24 +90,25 @@
                 appRoleId: ""
             };
         },
-        openModalUpdate(id) {
+
+        openModalUpdate(mssv) {
             this._modal.show();
             this._modalSetting = {
                 title: "Cập nhật thông tin",
-                url: "/Admin/User/Update/" + id,
+                url: `/Admin/User/Update?mssv=${mssv}`,
                 primaryButtonText: "Cập nhật"
             }
 
             // Lấy dữ liệu cho thao tác update
-            fetch("/Admin/User/Detail/" + id)
+            fetch(`/Admin/User/Detail?mssv=${mssv}`)
                 .then(res => res.json())
                 .then(json => {
-                    this._updinData = json
+                    this._updinData = json;
+                    console.log(this._updinData);
                 });
         },
 
         saveCategory() {
-            console.log(this._updinData);
             fetch(this._modalSetting.url, {
                 method: "POST",
                 headers: {
@@ -115,12 +116,10 @@
                 },
                 body: JSON.stringify(this._updinData)
             })
-
                 .then(res => {
                     return res.json();
                 })
                 .then(data => {
-                    console.log(data);
                     if (data.success) {
                         Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: data.message });
                         this.refreshData();
@@ -130,6 +129,7 @@
                     }
                 })
                 .catch(err => {
+                    console.log(err)
                     Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: `Thêm người không thành công!` });
                 })
         },

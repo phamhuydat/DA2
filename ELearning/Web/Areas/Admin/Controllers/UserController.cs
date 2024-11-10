@@ -5,6 +5,7 @@ using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Share.Consts;
 using Web.Areas.Admin.ViewModels.user;
 using Web.Common;
@@ -63,7 +64,7 @@ namespace Web.Areas.Admin.Controllers
                 });
             }
 
-            if (await _repo.AnyAsync<Users>(u => u.MSSV.Equals(model.MSSV)))
+            if (await _repo.AnyAsync<Users>(u => u.MSSV.Equals(model.Mssv)))
             {
                 return BadRequest(new
                 {
@@ -135,25 +136,39 @@ namespace Web.Areas.Admin.Controllers
         [HttpPost]
         [AppAuthorize(AuthConst.AppUser.UPDATE)]
 
-        public async Task<IActionResult> Update(int id, [FromBody] UserAddOrEditVM model)
+        public async Task<IActionResult> Update(string mssv, [FromBody] UserAddOrEditVM model)
         {
             if (!ModelState.IsValid)
             {
-                SetErrorMesg("hãy nhập đủ thông tin yêu cầu");
-                return Redirect(Referer);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Dữ liệu không hợp lệ",
+                    data = model
+                });
             }
-
-            var oldUsers = await _repo.FindAsync<Users>(id);
-
-            var userData = _mapper.Map<Users>(model);
-            await _repo.UpdateAsync(userData);
+            model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            var oldUsers = await _repo.GetOneAsync<Users>(u => u.MSSV == mssv);
+            if (oldUsers == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Không tìm thấy tài khoản",
+                    data = model
+                });
+            }
 
             _mapper.Map(model, oldUsers);
             oldUsers.UpdatedBy = this.CurrentUserId;
             oldUsers.UpdatedDate = DateTime.Now;
             await _repo.UpdateAsync(oldUsers);
 
-            return RedirectToAction("Index");
+            return Ok(new
+            {
+                success = true,
+                message = "Cập nhật tài khoản thành công"
+            });
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -170,12 +185,15 @@ namespace Web.Areas.Admin.Controllers
                 SetErrorMesg("Tên đăng nhập nà");
                 return Redirect(Referer);
             }
-
         }
 
-        public async Task<Users> Detail(int id)
+        [HttpGet]
+        public async Task<IActionResult> Detail(string mssv)
         {
-            return await _repo.FindAsync<Users>(id);
+            var data = await _repo.GetOneAsync<Users>(u => u.MSSV == mssv);
+            var result = _mapper.Map<UserAddOrEditVM>(data);
+            return Ok(result);
+
         }
     }
 }

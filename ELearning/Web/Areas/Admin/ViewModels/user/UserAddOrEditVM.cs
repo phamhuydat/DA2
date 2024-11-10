@@ -12,7 +12,7 @@ namespace Web.Areas.Admin.ViewModels.user
         [AppRequired]
         [AppUsername]
         [AppStringLength(VM.UserVM.USERNAME_MINLEN, DB.AppUser.USERNAME_LENGTH)]
-        public string MSSV { get; set; }
+        public string Mssv { get; set; }
 
         [AppRequired]
         [DataType(DataType.Password)]

@@ -216,23 +216,6 @@
                         document.getElementsByClassName("twocolumn-iconview")[0]
                     )) && e.getContentElement()));
     }
-    function h(e) {
-        if (e) {
-            var t = e.offsetTop,
-                a = e.offsetLeft,
-                o = e.offsetWidth,
-                n = e.offsetHeight;
-            if (e.offsetParent)
-                for (; e.offsetParent;)
-                    (t += (e = e.offsetParent).offsetTop), (a += e.offsetLeft);
-            return (
-                t >= window.pageYOffset &&
-                a >= window.pageXOffset &&
-                t + n <= window.pageYOffset + window.innerHeight &&
-                a + o <= window.pageXOffset + window.innerWidth
-            );
-        }
-    }
     function v() {
         "vertical" == document.documentElement.getAttribute("data-layout") &&
             ((document.getElementById("two-column-menu").innerHTML = ""),
@@ -545,23 +528,7 @@
                                     .closest(".collapse")
                                     .previousElementSibling.classList.add("active"))))));
     }
-    function h(e) {
-        if (e) {
-            var t = e.offsetTop,
-                a = e.offsetLeft,
-                o = e.offsetWidth,
-                n = e.offsetHeight;
-            if (e.offsetParent)
-                for (; e.offsetParent;)
-                    (t += (e = e.offsetParent).offsetTop), (a += e.offsetLeft);
-            return (
-                t >= window.pageYOffset &&
-                a >= window.pageXOffset &&
-                t + n <= window.pageYOffset + window.innerHeight &&
-                a + o <= window.pageXOffset + window.innerWidth
-            );
-        }
-    }
+
     function M() {
         var e = document.querySelectorAll(".counter-value");
         function s(e) {

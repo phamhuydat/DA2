@@ -39,7 +39,6 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-
         public async Task<IActionResult> GetSubject()
         {
             var model = new List<Subject>();

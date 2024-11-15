@@ -24,6 +24,8 @@
 
     <link href="~/lib/bootstrap-notify/css/bootstrap-notify.css" rel="stylesheet" />
 
+	<link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
+
 	<!-- custom Css-->
 	<link href="~/assets/css/custom.css" rel="stylesheet" asp-append-version="true" />
 
@@ -68,19 +70,17 @@
 
 		</div>
 		<!-- /.content-wrapper -->
-
 	</div>
 
 	@* @await Component.InvokeAsync("Notyf") *@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 	<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
 	<script src="~/assets/libs/node-waves/waves.min.js"></script>
 	<script src="~/assets/libs/feather-icons/feather.min.js"></script>
 	<script src="~/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
-
+    <script src="~/lib/select2/js/select2.full.min.js"></script>
 	<!-- apexcharts -->
 	<script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
 
@@ -88,8 +88,7 @@
 	<script src="~/assets/js/site.js" asp-append-version="true"></script>
 	
 	@RenderSection("scripts", false)
-
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/bootstrap-notify/js/bootstrap-notify.js"></script>
 	<script type="text/javascript" src="@Url.Content("~/assets/libs/choices.js/public/assets/scripts/choices.min.js")"></script>
 	<script type="text/javascript" src="@Url.Content("~/assets/libs/flatpickr/flatpickr.min.js")"></script>

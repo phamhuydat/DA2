@@ -25,10 +25,13 @@ namespace App.Web.Areas.Admin.Controllers
         {
             area = AREA_NAME
         };
+        protected const int ROLE_ADMIN_ID = 2;
+        protected const int ROLE_TEACHER_ID = 3;
         protected RedirectToActionResult AdminHomePage() => RedirectToAction("Index", "Home", new { area = "Admin" });
 
         protected int CurrentUserId { get => Convert.ToInt32(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)); }
         protected string CurrentUsername { get => HttpContext.User.Identity.Name; }
+        protected int RoleId { get => Convert.ToInt32(HttpContext.User.FindFirstValue(AppClaimTypes.RoleId)); }
         protected string Referer { get => Request.Headers["Referer"].ToString(); }
 
         private readonly ILog _logger;
@@ -69,23 +72,6 @@ namespace App.Web.Areas.Admin.Controllers
         {
             _logger.Error(ex);
             SetErrorMesg(EXCEPTION_ERR_MESG);
-        }
-
-        protected byte[] HashHMACSHA512WithKey(string pwd, byte[] key)
-        {
-            HMACSHA512 hmac = new(key);
-            var pwdByte = Encoding.UTF8.GetBytes(pwd);
-            return hmac.ComputeHash(pwdByte);
-        }
-
-        protected HashResult HashHMACSHA512(string pwd)
-        {
-            var hashResult = new HashResult();
-            HMACSHA512 hmac = new();
-            var pwdByte = Encoding.UTF8.GetBytes(pwd);
-            hashResult.Value = hmac.ComputeHash(pwdByte);
-            hashResult.Key = hmac.Key;
-            return hashResult;
         }
     }
 }

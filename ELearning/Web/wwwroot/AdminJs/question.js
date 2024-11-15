@@ -1,4 +1,48 @@
-﻿document.addEventListener("alpine:init", () => {
+﻿CKEDITOR.replace(["option-content", "js-ckeditor"]);
+//CKEDITOR.replace("js-ckeditor");
+$(document).ready(() => {
+    $('.jq-select2').select2();
+
+    // Initialize jqValidation setup for real-time  site.js
+    jqValidation();
+    // Initialize form validation
+    $("#form_add_question").validate({
+        rules: {
+            "mon-hoc": {
+                required: true,
+            },
+            "chuong": {
+                required: true,
+            },
+            "dokho": {
+                required: true,
+            },
+            "js-ckeditor": {
+                required: true,
+            },
+        },
+        messages: {
+            "mon-hoc": {
+                required: "Vui lòng chọn môn học",
+            },
+            "chuong": {
+                required: "Vui lòng chọn chương.",
+            },
+            "dokho": {
+                required: "Vui lòng chọn mức độ.",
+            },
+            "js-ckeditor": {
+                required: "Vui lòng không để trống câu hỏi.",
+            },
+        },
+        errorClass: "is-invalid",
+        validClass: "is-valid",
+    });
+
+
+});
+
+document.addEventListener("alpine:init", () => {
     Alpine.data("questions", () => ({
         _list: [],
         _listSubject: [],
@@ -151,7 +195,6 @@
                     status: option.status
                 }))
             };
-            console.log(data);
 
             fetch(this._modalSetting.url, {
                 method: 'POST',
@@ -165,16 +208,28 @@
                     if (result.success) {
                         // Handle success
                         this.refreshData();
-                        Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: result.message });
+                        showNotification({
+                            type: 'success',
+                            //icon: 'btn-close',
+                            message: result.message,
+                        });
+
                     } else {
                         // Handle error
-                        console.log(result.message);
-                        Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: result.message });
+                        showNotification({
+                            type: 'danger',
+                            //icon: 'btn-close',
+                            message: data.message,
+                        });
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: 'Lỗi kìa' });
+                    showNotification({
+                        type: 'danger',
+                        //icon: 'btn-close',
+                        message: 'Lỗi rồi',
+                    });
                 });
         },
         DeleteQuestion(idQuestion) {
@@ -185,12 +240,21 @@
                 .then(json => {
                     console.log(json);
                     this.refreshData();
-                    Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: json.message });
+                    showNotification({
+                        type: 'success',
+                        //icon: 'btn-close',
+                        message: json.message,
+                    });
 
                 })
                 .catch(err => {
                     console.log(err);
-                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: 'Xóa môn học không thành công' });
+                    showNotification({
+                        type: 'danger',
+                        //icon: 'btn-close',
+                        message: 'Xóa môn học không thành công',
+                    });
+                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: '' });
 
                 });
         },

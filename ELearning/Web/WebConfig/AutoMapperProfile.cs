@@ -3,6 +3,8 @@ using Data.Entities;
 using Web.Areas.Admin.ViewModels.Account;
 using Web.Areas.Admin.ViewModels.AnswerVM;
 using Web.Areas.Admin.ViewModels.ChapterVM;
+using Web.Areas.Admin.ViewModels.GroupDetailVM;
+using Web.Areas.Admin.ViewModels.GroupVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
 using Web.Areas.Admin.ViewModels.Role;
 using Web.Areas.Admin.ViewModels.SubjectVM;
@@ -33,7 +35,6 @@ namespace Web.WebConfig
             CreateMap<ChapterAddOrEditVM, Chapter>().ReverseMap();
 
 
-
             // Map dữ liệu từ AnswerAddOrEdit sang Answer
             CreateMap<AnswerAddOrEdit, Answer>().ReverseMap();
 
@@ -42,6 +43,11 @@ namespace Web.WebConfig
                 .ForMember(q => q.answers, opts => opts.MapFrom(qVM => qVM.Options))
                 .ReverseMap();
 
+            // map dữ liệu từ group sang ListGroupVM
+            CreateMap<Group, ListGroupVM>().ReverseMap();
+
+            // map dữ liệu từ groupAddOrEditVM sang group
+            CreateMap<GroupAddOrEditVM, Group>().ReverseMap();
         }
 
 
@@ -102,5 +108,48 @@ namespace Web.WebConfig
         {
             mapper.CreateMap<Answer, AnswerAddOrEdit>().ReverseMap();
         });
+
+
+        // Cấu hình mapping cho GroupController, action Index
+        public static MapperConfiguration GroupIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Group, ListGroupVM>()
+                .ForMember(vm => vm.Title, opts => opts.MapFrom(entity =>
+                    $"{entity.subject.SubjectCode} - {entity.subject.SubjectName} - NH{entity.AcademicYear} - {entity.Semester}"))
+                .ForMember(vm => vm.ListItemGroup, opts => opts.MapFrom(entity => new List<GroupDetailVM>
+                {
+                    new GroupDetailVM
+                    {
+                        Id = entity.Id,
+                        Notes = entity.Note,
+                        Quantity = entity.GroupDetails.Count,
+                        Name = entity.Teacher != null ? "GV: " + entity.Teacher : entity.GroupName,
+
+                    }
+                })).ReverseMap();
+
+            mapper.CreateMap<Group, GroupDetailVM>()
+                .ForMember(vm => vm.Id, opts => opts.MapFrom(entity => entity.Id))
+                //.ForMember(vm => vm.GroupName, opts => opts.MapFrom(entity => entity.GroupName))
+                .ForMember(vm => vm.Notes, opts => opts.MapFrom(entity => entity.Note))
+                //.ForMember(vm => vm.Visibility, opts => opts.MapFrom(entity => entity.Visibility))
+                .ReverseMap();
+        });
+
+
+        // cấu hình mapper cho GroupDetailController, action ListUserGroup
+
+        public static MapperConfiguration GroupDetailIndexConf => new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<GroupDetails, ListUserGroupVM>()
+                .ForMember(dest => dest.Mssv, opt => opt.MapFrom(src => src.User.MSSV))
+                .ForMember(dest => dest.fullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.User.Gender))
+                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.User.Birthday))
+                .ReverseMap();
+
+        });
+
     }
 }

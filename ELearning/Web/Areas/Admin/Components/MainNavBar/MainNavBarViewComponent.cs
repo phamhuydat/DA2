@@ -50,6 +50,16 @@ namespace Web.Areas.Admin.Components.MainNavBar
                         }
                     }
                 },
+
+                new MenuItem
+                {
+                    Action = "Index",
+                    Controller = "Group",
+                    DisplayText = "Nhóm học phần",
+                    SidebarText = "group",
+                    Icon = "layer-group",
+                    Permission = AuthConst.AppGroup.VIEW_DETAIL,
+                },
                 new MenuItem
                 {
                     Action = "Index",

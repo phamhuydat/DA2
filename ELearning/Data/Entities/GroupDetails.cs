@@ -6,7 +6,7 @@ namespace Data.Entities
     {
         public int GroupId { get; set; }
         public int UserId { get; set; }
-        public bool Display { get; set; }
+        public bool IsBlock { get; set; }
 
         //fk
         public Group Group { get; set; }

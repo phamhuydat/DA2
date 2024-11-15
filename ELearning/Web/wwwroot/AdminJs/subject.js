@@ -112,14 +112,21 @@
             })
                 .then(x => x.json())
                 .then(json => {
-                    console.log(json);
                     this.refreshData();
-                    Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: json.message });
+                    showNotification({
+                        type: 'success',
+                        //icon: 'btn-close',
+                        message: json.message,
+                    });
 
                 })
                 .catch(err => {
                     console.log(err);
-                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: 'thêm môn học không thành công' });
+                    showNotification({
+                        type: 'danger',
+                        //icon: 'btn-close',
+                        message: 'Lỗi rồi',
+                    });
 
                 });
         },
@@ -131,12 +138,21 @@
                 .then(json => {
                     console.log(json);
                     this.refreshData();
-                    Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: json.message });
+                    showNotification({
+                        type: 'success',
+                        //icon: 'btn-close',
+                        message: 'json.message',
+                    });
+
 
                 })
                 .catch(err => {
                     console.log(err);
-                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: 'Xóa môn học không thành công' });
+                    showNotification({
+                        type: 'danger',
+                        //icon: 'btn-close',
+                        message: 'Xóa môn học không thành công',
+                    });
 
                 });
         },

@@ -106,7 +106,6 @@ namespace Web.Areas.Admin.Controllers
         public async Task<Users> CheckUser(string mssv)
         {
             return await _repo.GetOneAsync<Users>(u => u.MSSV == mssv);
-
         }
 
         //[HttpPost]

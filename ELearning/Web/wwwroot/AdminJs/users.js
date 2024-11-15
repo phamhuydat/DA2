@@ -1,4 +1,67 @@
-﻿document.addEventListener("alpine:init", () => {
+﻿$(document).ready(() => {
+    $('.select2').select2();
+    // Initialize jqValidation setup for real-time
+    jqValidation();
+
+    $('.form-add-user').validate({
+        rules: {
+            "mssv": {
+                required: true,
+                number: true
+            },
+            "user_email": {
+                required: true,
+                email: !0
+            },
+            "user_name": {
+                required: true,
+            },
+            "user_gender": {
+                required: true,
+            },
+            "datepicker": {
+                required: true,
+            },
+            "user_nhomquyen": {
+                required: true,
+            },
+            "user_password": {
+                required: true,
+                minlength: 4
+            },
+        },
+        messages: {
+            "masv": {
+                required: "Vui lòng nhập mã sinh viên của bạn",
+                number: "Mã sinh viên phải là các ký tự số"
+            },
+            "user_email": {
+                required: "Vui lòng cung cấp email của bạn",
+                email: "Phải nhập đúng định dạng email"
+            },
+            "user_name": {
+                required: "Cung cấp đầy đủ họ tên",
+            },
+            "user_gender": {
+                required: "Tích chọn 1 trong 2",
+            },
+            "datepicker": {
+                required: "Vui lòng cho biết ngày sinh của bạn",
+            },
+            "user_nhomquyen": {
+                required: "Vui lòng chọn nhóm quyền",
+            },
+            "user_password": {
+                required: "Nhập mật khẩu",
+                minlength: "Mật khẩu phải có ít nhất 5 ký tự!"
+            },
+        }
+
+    });
+});
+
+
+document.addEventListener("alpine:init", () => {
     Alpine.data("users", () => ({
         _list: [],
         _modal: {},
@@ -121,16 +184,27 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        Dashmix.helpers('jq-notify', { type: 'success', icon: 'fa fa-times me-1', message: data.message });
+                        showNotification({
+                            type: 'success',
+                            //icon: 'btn-close',
+                            message: data.message,
+                        });
                         this.refreshData();
                     }
                     else {
-                        Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: data.message });
+                        showNotification({
+                            type: 'danger',
+                            //icon: 'btn-close',
+                            message: data.message,
+                        });
                     }
                 })
                 .catch(err => {
-                    console.log(err)
-                    Dashmix.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: `Thêm người không thành công!` });
+                    showNotification({
+                        type: 'danger',
+                        //icon: 'btn-close',
+                        message: 'Lỗi rồi',
+                    });
                 })
         },
 
@@ -159,3 +233,4 @@
         }
     }))
 });
+

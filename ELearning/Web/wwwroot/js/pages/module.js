@@ -1,8 +1,7 @@
 Dashmix.helpersOnLoad(["jq-select2"]);
-
 Dashmix.onLoad((() => class {
     static initValidation() {
-        Dashmix.helpers("jq-validation"), jQuery(".form-add-group").validate({
+        Dashmix.helpers("jq-validation"), jQuery("#form-add-group").validate({
             rules: {
                 "ten-nhom": {
                     required: !0,
@@ -175,7 +174,7 @@ $(document).ready(function () {
 
     $("#add-group").click(function (e) {
         e.preventDefault();
-        if($(".form-add-group").valid()) {
+        if ($(".form-add-group").valid()) {
             $.ajax({
                 type: "post",
                 url: "./module/add",
@@ -345,17 +344,17 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 $("#ten-nhom").val(response.tennhom),
-                $("#ghi-chu").val(response.ghichu),
-                $("#mon-hoc").val(response.mamonhoc).trigger("change"),
-                $("#nam-hoc").val(response.namhoc).trigger("change"),
-                $("#hoc-ky").val(response.hocky).trigger("change")
+                    $("#ghi-chu").val(response.ghichu),
+                    $("#mon-hoc").val(response.mamonhoc).trigger("change"),
+                    $("#nam-hoc").val(response.namhoc).trigger("change"),
+                    $("#hoc-ky").val(response.hocky).trigger("change")
             }
         });
     });
 
     $("#update-group").click(function (e) {
         e.preventDefault();
-        if($(".form-add-group").valid()) { 
+        if ($(".form-add-group").valid()) {
             $.ajax({
                 type: "post",
                 url: "./module/update",

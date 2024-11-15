@@ -23,7 +23,7 @@
                         <i class='bx bx-moon fs-22'></i>
                     </button>
                 </div>
-
+                <!--  thông báo--!>
                 <div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                             id="page-header-notifications-dropdown" data-bs-toggle="dropdown"
@@ -258,7 +258,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="text-reset notification-item d-block dropdown-item">
                                         <div class="d-flex">
                                             <img src="~/assets/images/users/avatar-2.jpg"
@@ -395,38 +394,36 @@
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
                                     @Context.User.Identity.Name
                                 </span>
-                                @if(Context.User.FindFirstValue(AppClaimTypes.RoleName) == "Admin")
+                                @if (Context.User.FindFirstValue(AppClaimTypes.RoleName) == "Admin")
                                 {
-                                    <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text"> 
-                                        (Quản trị viên)
-                                    </span>
-                                } 
+                                        <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
+                                            (Quản trị viên)
+                                        </span>
+                                }
                                 else if (Context.User.FindFirstValue(AppClaimTypes.RoleName) == "Student")
                                 {
-                                    <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
-                                        (Giáo viên)
-                                    </span>
+                                        <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
+                                            (Giáo viên)
+                                        </span>
                                 }
                                 else
                                 {
-                                    <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
-                                        (Học sinh)
-                                    </span>
+                                        <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
+                                            (Học sinh)
+                                        </span>
                                 }
                             </span>
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Xin chào: @Context.User.Identity.Name</h6>
-                        <a class="dropdown-item" asp-action="Profile" asp-controller="Account">
-                            <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span>
-                        </a>
-                        <a class="dropdown-item" asp-action="Logout" asp-controller="Account" asp-area="">
-                            <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span>
-                        </a>
-                    </div>
-                </div>
+                <h6 class="dropdown-header">Xin chào: @Context.User.Identity.Name</h6>
+                <a class="dropdown-item" asp-action="Profile" asp-controller="Account">
+                    <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span>
+                </a>
+                <a class="dropdown-item" asp-action="Logout" asp-controller="Account" asp-area="">
+                    <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span>
+                </a>
             </div>
         </div>
     </div>

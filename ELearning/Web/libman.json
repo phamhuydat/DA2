@@ -13,6 +13,10 @@
     {
       "library": "bootstrap-notify@0.2.0",
       "destination": "wwwroot/lib/bootstrap-notify/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "wwwroot/lib/select2/"
     }
   ]
 }

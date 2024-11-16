@@ -1,4 +1,67 @@
-﻿document.addEventListener("alpine:init", () => {
+﻿$(document).ready(() => {
+    $('.jq-select2').select2();
+
+    // Initialize jqValidation setup for real-time  site.js
+    jqValidation();
+    // Initialize form validation
+    $(".form-add-subject").validate({
+        rules: {
+            mamonhoc: {
+                required: !0,
+                digits: true,
+            },
+            tenmonhoc: {
+                required: !0,
+            },
+            sotinchi: {
+                required: !0,
+            },
+            sotiet_lt: {
+                required: !0,
+            },
+            sotiet_th: {
+                required: !0,
+            },
+        },
+        messages: {
+            mamonhoc: {
+                required: "Vui lòng nhập mã môn học",
+                digits: "Mã môn học phải là các ký tự số",
+            },
+            tenmonhoc: {
+                required: "Vui lòng cung cấp tên môn học",
+            },
+            sotinchi: {
+                required: "Vui lòng cho biết số tín chỉ",
+            },
+            sotiet_lt: {
+                required: "Vui lòng nhập số tiết lý thuyết",
+            },
+            sotiet_th: {
+                required: "Vui lòng nhập số tiết thực hành",
+            },
+        },
+    });
+});
+
+$(document).ready(function () {
+    function resetFormChapter() {
+        $("#collapseChapter").collapse("hide");
+        $("#name_chapter").val("");
+    }
+
+    $(".close-chapter").click(function (e) {
+        e.preventDefault();
+        $("#collapseChapter").collapse("hide");
+    });
+
+    $(document).on("click", ".chapter-edit", function () {
+        $("#collapseChapter").collapse("show");
+
+    });
+
+});
+document.addEventListener("alpine:init", () => {
     Alpine.data("subjects", () => ({
         _list: [],
         _listChapter: [],

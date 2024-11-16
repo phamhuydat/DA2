@@ -1,8 +1,5 @@
 ﻿
 $(document).ready(() => {
-    // Initialize Select2 on page load
-    //$('.select2').select2();
-    // Initialize jqValidation setup for real-time  site.js
     jqValidation();
     // Initialize form validation
     $('#form-add-group').validate({

@@ -51,15 +51,28 @@ namespace Web.Areas.Admin.Controllers
 
                 return Ok(groupedListGroup);
             }
+            else
+            {
+                var listGroupByTeacher = _repo.GetAll<Group>(
+                        x => x.DeletedDate == null && x.GroupDetails.Any(gd => gd.UserId == this.CurrentUserId))
+                    .Include(x => x.subject) // Ensure that the Subject navigation property is included
+                    .Include(x => x.GroupDetails) // Include GroupDetails to access it in the mapping
+                    .ProjectTo<ListGroupVM>(AutoMapperProfile.GroupIndexConf) // Pass any parameters if needed
+                    .ToList();
+                var groupedListGroupTeacher = listGroupByTeacher
+                        .GroupBy(item => item.Title) // Nhóm theo Title
+                        .Select(group => new
+                        {
+                            Title = group.Key,
+                            ListItemGroup = group.SelectMany(item => item.ListItemGroup).ToList(),
+                            Id = group.First().Id,
+                            RowIndex = group.First().RowIndex
+                        })
+                        .ToList();
 
-            var listGroupByTeacher = _repo.GetAll<Group>(
-                    x => x.DeletedDate == null && x.GroupDetails.Any(gd => gd.UserId == this.CurrentUserId))
-                .Include(x => x.subject) // Ensure that the Subject navigation property is included
-                .Include(x => x.GroupDetails) // Include GroupDetails to access it in the mapping
-                .ProjectTo<ListGroupVM>(AutoMapperProfile.GroupIndexConf) // Pass any parameters if needed
-                .ToList();
+                return Ok(groupedListGroupTeacher);
+            }
 
-            return Ok(listGroupByTeacher);
         }
 
         [HttpPost]

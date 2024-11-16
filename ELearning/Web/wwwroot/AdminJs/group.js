@@ -1,4 +1,4 @@
-﻿CKEDITOR.replace("option-content");
+﻿
 $(document).ready(() => {
     // Initialize jqValidation setup for real-time  site.js
     jqValidation();

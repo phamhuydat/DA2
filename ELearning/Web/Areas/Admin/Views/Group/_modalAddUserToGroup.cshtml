@@ -59,16 +59,16 @@
 
                 <div class="tab-pane fade fade-up" id="ma-moi" role="tabpanel" aria-labelledby="ma-moi-tab"
                         tabindex="0">
-                    <h2 class="display-1 text-center py-6"
+                    <h2 class="display-1 text-center py-6" id="show-invited-code"
                         x-text="InvitedCode">
                     </h2>
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <p class="text-center mb-0">
-                            Tên lớp
+                        <p class="text-center mb-0" x-text="groupName">
                         </p>
                         <div>
                             <button type="button" class="btn btn-primary btn-copy-code" 
-                            data-bs-toggle="tooltip" data-bs-placement="top" title="Sao chép mã mời">
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" title="Sao chép mã mời">
                                 <i class="ri-file-copy-fill"></i>
                             </button>
                             <button type="button" class="btn btn-primary"

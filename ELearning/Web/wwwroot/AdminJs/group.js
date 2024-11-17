@@ -1,5 +1,4 @@
-﻿
-$(document).ready(() => {
+﻿$(document).ready(() => {
     // Initialize jqValidation setup for real-time  site.js
     jqValidation();
     // Initialize form validation
@@ -20,8 +19,6 @@ $(document).ready(() => {
             "hoc-ky": {
                 required: true,
             },
-
-
         },
         messages: {
             "ten-nhom": {
@@ -59,10 +56,20 @@ $(document).ready(() => {
                 number: "Mã số sinh viên phải là số"
             },
         }
-
     });
 
-
+    $(".btn-copy-code").click(function (e) {
+        e.preventDefault();
+        var text = $("#show-invited-code").text();
+        navigator.clipboard.writeText(text)
+            .then(function () {
+                // Hiển thị thông báo thành công
+            })
+            .catch(function (error) {
+                // Xử lý lỗi nếu có
+                console.error("Lỗi sao chép:", error);
+            });
+    });
 });
 
 document.addEventListener("alpine:init", () => {
@@ -106,8 +113,6 @@ document.addEventListener("alpine:init", () => {
                 this._modalUser = new bootstrap.Modal("#modal-add-user");
                 this.groupId = this.getIdFromUrl();
                 this.LoadDataUser();
-
-                console.log(this.groupName);
                 this.LoadInvitation();
 
             }
@@ -145,7 +150,6 @@ document.addEventListener("alpine:init", () => {
                 .catch(err => {
                     console.log(err);
                 });
-
         },
 
         async LoadDataUser() {
@@ -156,10 +160,12 @@ document.addEventListener("alpine:init", () => {
                         ...item,
                         rowIndex: index + 1
                     }));
+                    this.groupName = this._listUser.map(x => x.groupName)[0];
                 })
                 .catch(err => {
                     console.log(err);
                 });
+
         },
 
         async LoadInvitation() {
@@ -199,15 +205,11 @@ document.addEventListener("alpine:init", () => {
                     this._updinData = json;
                     console.log(this._updinData);
                 });
-
         },
 
         OpenListStudent(id) {
-            this.groupId = id;
-            this.groupName = this._listGroups.find(x => x.id == this.groupId).title;
             window.location.href = "/Admin/Group/GetViewUser/" + id;
         },
-
 
         SaveData() {
             var data = {
@@ -319,7 +321,6 @@ document.addEventListener("alpine:init", () => {
                     });
                 })
         },
-
 
     }))
 });

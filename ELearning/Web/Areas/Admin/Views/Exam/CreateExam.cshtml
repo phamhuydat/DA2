@@ -1,0 +1,174 @@
+﻿@{
+    ViewBag.Title = "Tạo đề thi";
+}
+
+@section scripts{
+    <script src="~/AdminJs/addExam.js" asp-append-version="true" ></script>
+    <script src="~/assets/libs/prismjs/prism.js"></script>
+    <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+}
+
+<div x-data="AddExam">
+    <div class="row">
+        <div class="col-lg-8 order-first">
+            <div class="card">
+                <form class="form-add-Exam">
+                    <div class="card-header">
+                        <h3 class="card-title">Cập nhật đề thi</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label" for="name-exam">Tên đề kiểm tra</label>
+                            <input type="text" class="form-control" id="name-exam" name="name-exam"
+                                    placeholder="Nhập tên đề kiểm tra">
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-xl-6">
+                                <label class="form-label" for="time-start">
+                                    Thời gian bắt đầu
+                                </label>
+                                <input type="text" class="form-control"
+                                       data-provider="flatpickr" data-date-format="d-m-y"
+                                       data-enable-time placeholder="Từ">
+                            </div>
+                            <div class="col-xl-6">
+                                <label class="form-label">Thời gian kết thúc</label>
+
+                                <input type="text" class="form-control"
+                                       data-provider="flatpickr" data-date-format="d-m-y"
+                                       data-enable-time placeholder="Đến">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="input-group">
+                                <span class="input-group-text">Thời gian làm bài</span>
+                                <input type="number" class="form-control text-center" id="exam-time" name="exam-time"
+                                        placeholder="00">
+                                <span class="input-group-text">phút</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="card card-rounded border">
+                                <div class="card-header">
+                                    <h3 class="card-title">Học phần</h3>
+                                    <div class="card-option">
+                                        <select class="form-select js-select2"
+                                                x-model="_updinData.subjectId"
+                                                id="nhom-hp" name="nhom-hp"
+                                                @@change="LoadChapter()">
+                                            <option value="" selected>Choose one...</option>
+                                            <template x-for="item in _listSubject">
+                                                <option :value="item.id" x-text="item.subjectName"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="card-body pb-3">
+                                    <div class="row" id="list-group">
+                                        <div class="text-center fs-sm">
+                                            <img style="width: 100px" 
+                                                src="~/assets/images/media/empty_data.png" />
+                                        </div>
+                                    </div>
+                                </div>
+
+@*                                 <div class="card-body pb-3">
+                                    <div class="row" id="list-group">
+                                        <template x-if="_listChapter.length === 0">
+                                            <div class="text-center fs-sm">
+                                                <img style="width: 100px" src="~/assets/images/media/empty_data.png" />
+                                            </div>
+                                        </template>
+                                        <template x-for="item in _listChapter" :key="item.id">
+                                            <div class="col-12">
+                                                <p x-text="item.chapterName"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div> *@
+                            
+                            </div>
+                        </div>
+
+                        <div class="mb-4 show-chap">
+                            <label class="form-label">Chương</label>
+                            <select class="form-control" name="chuong" data-choices
+                                    data-choices-removeItem multiple>
+                                <template x-for="item in _listChapter" :key="item.id">
+                                    <option :value="item.id" x-text="item.chapterName"></option>
+                                </template>
+
+
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="form-label" for="coban">Số câu dễ</label>
+                                    <input type="number" class="form-control" name="coban" id="coban">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" for="trungbinh">Số câu trung bình</label>
+                                    <input type="number" class="form-control" name="trungbinh" id="trungbinh">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" for="kho">Số câu khó</label>
+                                    <input type="number" class="form-control" name="kho" id="kho">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <button type="submit" class="btn btn-hero btn-primary" id="btn-add-test">
+                                <i class="fa fa-fw fa-plus me-1"></i> Tạo đề
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header align-items-center">
+                    <h4 class="card-title mb-0 flex-grow-1">CẤU HÌNH</h4>
+                </div>
+                <div id="side-content" class="card-body">
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="tudongsoande" name="tudongsoande" checked>
+                        <label class="form-check-label" for="tudongsoande">Tự động lấy từ ngân hàng đề</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="xemdiem" name="xemdiem">
+                        <label class="form-check-label" for="xemdiem">Xem điểm sau khi thi xong</label>
+                    </div>
+                    <div class="form-check form-switch mb-2 d-none">
+                        <input class="form-check-input" type="checkbox" id="xemda" name="xemda">
+                        <label class="form-check-label" for="xemda">Xem đáp án khi thi xong</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="xembailam" name="xembailam">
+                        <label class="form-check-label" for="xembailam">Xem bài làm khi thi xong</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="daocauhoi" name="daocauhoi">
+                        <label class="form-check-label" for="daocauhoi">Đảo câu hỏi</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="daodapan" name="daodapan">
+                        <label class="form-check-label" for="daodapan">Đảo đáp án</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="tudongnop" name="tudongnop">
+                        <label class="form-check-label" for="tudongnop">Tự động nộp bài khi chuyển tab</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

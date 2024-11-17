@@ -44,72 +44,70 @@
                 </div>
 
                 <div class="row">
-                    <template x-for="item in groups.listItemGroup" :key="item.id">
-                        @* <div class="item"> *@
-                            <!-- end col -->
-                            <div class="col-xxl-3 col-sm-4 project-card mt-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="p-3 mt-n3 mx-n3 bg-soft-info">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1">
-                                                    <h5 class="mb-0 fs-15" x-text="item.name"></h5>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <div class="d-flex gap-1 align-items-center my-n2">
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-link text-muted p-1 mt-n1 py-0 text-decoration-none fs-15"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="true">
-                                                                <i data-feather="more-horizontal" class="las la-ellipsis-h"></i>
-                                                            </button>
+                    <template x-for="item in groups.listItemGroup">
+                        <!-- end col -->
+                        <div class="col-xxl-3 col-sm-4 project-card mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="p-3 mt-n3 mx-n3 bg-soft-info">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-0 fs-15" x-text="item.name"></h5>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <div class="d-flex gap-1 align-items-center my-n2">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-link text-muted p-1 mt-n1 py-0 text-decoration-none fs-15"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="true">
+                                                            <i data-feather="more-horizontal" class="las la-ellipsis-h"></i>
+                                                        </button>
 
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <button class="dropdown-item" 
-                                                                        x-on:click="OpenListStudent(groups.id)">
-                                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
-                                                                    Danh sách sinh viên
-                                                                </button>
-                                                                <a class="dropdown-item" x-on:click="OpenModalEdit(groups.id)">
-                                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                                                    Sửa thông tin
-                                                                </a>
-                                                                <div class="dropdown-divider"></div>
-                                                                <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                    data-bs-target="#removeProjectModal">
-                                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                                                    Xóa nhóm
-                                                                </a>
-                                                            </div>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <button class="dropdown-item" 
+                                                                    x-on:click="OpenListStudent(item.id)">
+                                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i>
+                                                                Danh sách sinh viên
+                                                            </button>
+                                                            <a class="dropdown-item" x-on:click="OpenModalEdit(item.id)">
+                                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                Sửa thông tin
+                                                            </a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#removeProjectModal">
+                                                                <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                Xóa nhóm
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="py-3">
-                                            <div class="row gy-3">
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-1">Thời gian</p>
-                                                        <div class="fs-16" x-text="item.notes"></div>
-                                                    </div>
+                                    </div>
+                                    <div class="py-3">
+                                        <div class="row gy-3">
+                                            <div class="col-6">
+                                                <div>
+                                                    <p class="text-muted mb-1">Thời gian</p>
+                                                    <div class="fs-16" x-text="item.notes"></div>
                                                 </div>
-                                                <div class="col-6">
-                                                    <div>
-                                                        <p class="text-muted mb-1">Sỉ số</p>
-                                                        <h5 class="fs-16" x-text="item.quantity"></h5>
-                                                    </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>
+                                                    <p class="text-muted mb-1">Sỉ số</p>
+                                                    <h5 class="fs-16" x-text="item.quantity"></h5>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
-                                    <!-- end card body -->
+
                                 </div>
-                                <!-- end card -->
+                                <!-- end card body -->
                             </div>
-                            <!-- end col -->
-                        @* </div> *@
+                            <!-- end card -->
+                        </div>
+                        <!-- end col -->
                     </template>
                 </div>
             </div>

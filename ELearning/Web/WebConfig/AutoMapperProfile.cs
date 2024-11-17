@@ -147,8 +147,8 @@ namespace Web.WebConfig
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.User.Gender))
                 .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.User.Birthday))
+                .ForMember(dest => dest.GroupName, opt => opt.MapFrom(src => src.Group.GroupName))
                 .ReverseMap();
-
         });
 
     }

@@ -69,7 +69,6 @@ namespace Web.Areas.Admin.Controllers
                             RowIndex = group.First().RowIndex
                         })
                         .ToList();
-
                 return Ok(groupedListGroupTeacher);
             }
 
@@ -127,7 +126,6 @@ namespace Web.Areas.Admin.Controllers
 
         }
 
-
         [HttpPost]
         [AppAuthorize(AuthConst.AppGroup.UPDATE)]
         public async Task<IActionResult> EditGroup(int id, [FromBody] GroupAddOrEditVM model)
@@ -183,9 +181,6 @@ namespace Web.Areas.Admin.Controllers
             return Ok(data);
         }
 
-
-
-
         [HttpGet]
         public IActionResult GetViewUser(int id)
         {
@@ -198,11 +193,11 @@ namespace Web.Areas.Admin.Controllers
 
             var listUser = await _repo.GetAll<GroupDetails>(x => x.GroupId == id)
                 .Include(x => x.User)
+                .Include(x => x.Group)
                 .ProjectTo<ListUserGroupVM>(AutoMapperProfile.GroupDetailIndexConf)
                 .ToListAsync();
             return Ok(listUser);
         }
-
 
 
         [HttpPost]
@@ -269,6 +264,8 @@ namespace Web.Areas.Admin.Controllers
                 data = group.InvitationCode
             });
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> BlockUser(BlockUserVM data)

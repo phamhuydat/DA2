@@ -1,5 +1,6 @@
-﻿CKEDITOR.replace(["option-content", "js-ckeditor"]);
-//CKEDITOR.replace("js-ckeditor");
+﻿CKEDITOR.replace("option-content");
+CKEDITOR.replace("js-ckeditor");
+
 $(document).ready(() => {
     $('.jq-select2').select2();
 
@@ -87,11 +88,11 @@ document.addEventListener("alpine:init", () => {
             };
 
             this._modal = new bootstrap.Modal("#modal-add-question");
-
             this.refreshData();
             this.LoadSubject();
             this.LoadChapter();
         },
+
         refreshData() {
             fetch("/Admin/Question/ListItem")
                 .then(x => x.json())

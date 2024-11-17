@@ -2,6 +2,8 @@
 {
     public class ListUserGroupVM : ListItemBaseVM
     {
+
+        public string GroupName { get; set; }
         public string Mssv { get; set; }
         public string fullName { get; set; }
         public string Email { get; set; }

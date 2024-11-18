@@ -2,13 +2,16 @@
     ViewBag.Title = "Tạo đề thi";
 }
 
+
 @section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
     <script src="~/AdminJs/addExam.js" asp-append-version="true" ></script>
     <script src="~/assets/libs/prismjs/prism.js"></script>
     <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
 }
 
-<div x-data="AddExam">
+<div x-data="AddExam" x-init="init()">
     <div class="row">
         <div class="col-lg-8 order-first">
             <div class="card">
@@ -69,6 +72,8 @@
 
                                 <div class="card-body pb-3">
                                     <div class="row" id="list-group">
+                                        
+
                                         <div class="text-center fs-sm">
                                             <img style="width: 100px" 
                                                 src="~/assets/images/media/empty_data.png" />
@@ -94,15 +99,13 @@
                             </div>
                         </div>
 
-                        <div class="mb-4 show-chap">
+                        <div class="mb-4">
                             <label class="form-label">Chương</label>
-                            <select class="form-control" name="chuong" data-choices
-                                    data-choices-removeItem multiple>
-                                <template x-for="item in _listChapter" :key="item.id">
-                                    <option :value="item.id" x-text="item.chapterName"></option>
-                                </template>
-
-
+                            <select class="form-control"
+                                    id="choices-multiple-remove-button"
+                                    name="choices-multiple-remove-button"
+                                    x-ref="selectElement"
+                                    multiple>
                             </select>
                         </div>
 
@@ -136,7 +139,7 @@
             <div class="card">
                 <div class="card-header align-items-center">
                     <h4 class="card-title mb-0 flex-grow-1">CẤU HÌNH</h4>
-                </div>
+                </div>                                                                          
                 <div id="side-content" class="card-body">
                     <div class="form-check form-switch mb-2">
                         <input class="form-check-input" type="checkbox" id="tudongsoande" name="tudongsoande" checked>

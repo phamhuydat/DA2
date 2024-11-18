@@ -184,6 +184,7 @@ namespace Web.Areas.Admin.Controllers
             chapter.UpdatedBy = this.CurrentUserId;
             chapter.UpdatedDate = DateTime.Now;
             chapter.Status = true;
+
             await _repo.UpdateAsync(chapter);
             return Ok(new
             {

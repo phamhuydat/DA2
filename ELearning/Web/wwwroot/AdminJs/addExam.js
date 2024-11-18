@@ -142,13 +142,11 @@ $(document).ready(() => {
     });
 });
 
-
-
 document.addEventListener("alpine:init", () => {
     Alpine.data("AddExam", () => ({
         _listSubject: [],
         _listChapter: [],
-
+        _listGroup: [],
         _updinData: {
             id: 0,
             name: "",
@@ -156,40 +154,86 @@ document.addEventListener("alpine:init", () => {
             timeEnd: "",
             examTime: "",
             subjectId: 0,
-            chapterId: 0,
+            chapterId: [],
             easy: 0,
             medium: 0,
             hard: 0,
         },
-        init() {
-            this.LoadSubject();
-            this.LoadChapter();
-        },
+        choicesInstance: null,
+        selectedChapters: [],
 
+        init() {
+            if (this.choicesInstance) {
+                return; // Nếu đã khởi tạo rồi, không làm gì nữa
+            }
+            // Khởi tạo Choices.js
+            this.choicesInstance = new Choices(this.$refs.selectElement, {
+                removeItemButton: true,
+                shouldSort: false,
+            });
+
+            // Thay thế danh sách option trong Choices.js bằng _listChapter
+            this.updateChoices();
+
+            // Lắng nghe thay đổi từ Choices.js
+            this.$refs.selectElement.addEventListener("change", (event) => {
+                this.selectedChapters = Array.from(event.target.selectedOptions).map(
+                    (option) => option.value
+                );
+            });
+            console.log(this.selectedChapters);
+
+            this.LoadSubject();
+        },
         LoadSubject() {
             fetch("/Admin/Exam/GetSubject")
                 .then(x => x.json())
                 .then(json => {
                     this._listSubject = json;
-                    console.log(this._listSubject);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        LoadChapter() {
+            fetch(`/Admin/Exam/GetChapter?subjectId=${this._updinData.subjectId
+                }`)
+                .then(x => x.json())
+                .then(json => {
+                    this._listChapter = json;
+                    this.updateChoices();
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
 
-        LoadChapter() {
-            console.log(this._updinData.subjectId);
-
-            fetch(`/Admin/Exam/GetChapter?subjectId=${this._updinData.subjectId}`)
+        LoadListGroup() {
+            fetch(`/Admin/Exam/GetListGroup?subjectId=${this._updinData.subjectId}`)
                 .then(x => x.json())
                 .then(json => {
-                    this._listChapter = json;
-                    console.log(this._listChapter);
+                    this._listGroup = json;
                 })
                 .catch(err => {
                     console.log(err);
                 });
+        },
+
+        updateChoices() {
+            // Xóa tất cả các option hiện tại
+            this.choicesInstance.clearChoices();
+            console.log(this._listChapter)
+
+            // Thêm các option mới từ _listChapter
+            this._listChapter.forEach((chapter) => {
+                this.choicesInstance.setChoices([
+                    {
+                        value: chapter.id,
+                        label: chapter.chapterName,
+                        selected: this.selectedChapters.includes(chapter.id),
+                    },
+                ]);
+            });
         },
 
 

@@ -3,6 +3,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.SubjectVM;
@@ -22,7 +23,7 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSubject()
+        public IActionResult GetSubject()
         {
             var model = new List<Subject>();
 
@@ -41,12 +42,22 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetChapter(int subjectId)
+        public IActionResult GetChapter(int subjectId)
         {
             var data = _repo.GetAll<Chapter>()
                 .Where(c => c.SubjectId == subjectId)
                 .ProjectTo<ListChapterVM>(AutoMapperProfile.ChapterIndexConf)
                 .ToList();
+            return Ok(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetListGroup(int subjectId)
+        {
+            var data = _repo.GetAll<Group>()
+                .Where(c => c.SubjectId == subjectId)
+                .ToList();
+
             return Ok(data);
         }
 

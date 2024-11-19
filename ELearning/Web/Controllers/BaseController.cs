@@ -11,7 +11,7 @@ using Web.WebConfig;
 
 namespace Web.Controllers
 {
-    [Authorize(AuthenticationSchemes = AppConst.CLIENT_COOKIES_AUTH)]
+    [Authorize(AuthenticationSchemes = AppConst.ADMIN_COOKIES_AUTH)]
     public class BaseController : Controller
     {
         protected readonly IMapper _mapper;

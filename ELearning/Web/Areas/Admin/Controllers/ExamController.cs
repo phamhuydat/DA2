@@ -5,8 +5,11 @@ using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
+using Share.Consts;
 using Web.Areas.Admin.ViewModels.ChapterVM;
+using Web.Areas.Admin.ViewModels.ExamVM;
 using Web.Areas.Admin.ViewModels.SubjectVM;
+using Web.Common;
 using Web.WebConfig;
 
 namespace Web.Areas.Admin.Controllers
@@ -61,13 +64,51 @@ namespace Web.Areas.Admin.Controllers
             return Ok(data);
         }
 
-
-
         [HttpGet]
+        [AppAuthorize(AuthConst.AppExam.CREATE)]
         public IActionResult CreateExam()
         {
             return View();
         }
+
+        [HttpPost]
+        [AppAuthorize(AuthConst.AppExam.CREATE)]
+        public async Task<IActionResult> CreateExam([FromBody] ExamAddOrEditVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Dữ liệu không hợp lệ",
+                    data = model
+                });
+            }
+
+            var exam = _mapper.Map<Exam>(model);
+            exam.CreatedBy = CurrentUserId;
+            exam.CreatedDate = DateTime.Now;
+            exam.Status = true;
+
+            await _repo.AddAsync(exam);
+            // lấy ra dữ liệu mới được thêm vào của exam không có Id
+            exam = await _repo.GetOneAsync<Exam>(e => e.Id == exam.Id);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Tạo bài kiểm tra thành công",
+                Data = exam
+            });
+        }
+
+        [HttpGet]
+        [AppAuthorize(AuthConst.AppExam.CREATE)]
+        public IActionResult AddManualExam()
+        {
+            return View();
+        }
+
 
         [HttpGet]
         public IActionResult EditExam(int id)

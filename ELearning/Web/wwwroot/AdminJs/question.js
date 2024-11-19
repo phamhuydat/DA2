@@ -77,6 +77,12 @@ document.addEventListener("alpine:init", () => {
             status: false
         },
 
+        _importFile: {
+            subjectId: 0,
+            chapterId: 0,
+            file: null
+        },
+
         init() {
             var config = {
                 durations: {
@@ -259,6 +265,56 @@ document.addEventListener("alpine:init", () => {
 
                 });
         },
+
+        handleFile(event) {
+            this._importFile.file = event.target.files[0];
+        },
+        ImportFileWord() {
+            if (!this._importFile.file) {
+                console.log("khong cos file");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("fileWord", this._importFile.file); // Thêm file
+            formData.append("subjectId", this._importFile.subjectId); // Thêm subjectId
+            formData.append("chapterId", this._importFile.chapterId); // Thêm chapterId
+
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
+
+            fetch("/Admin/Question/ImportFileWord", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result)
+                    if (result.success) {
+                        // Handle success
+                        showNotification({
+                            type: 'success',
+                            message: result.message,
+                        });
+                        this.refreshData();
+                    } else {
+                        // Handle error
+                        showNotification({
+                            type: 'danger',
+                            message: result.message,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    showNotification({
+                        type: 'danger',
+                        message: 'Lỗi rồi',
+                    });
+                });
+        },
+
 
         OpenAddAnswer() {
             this.open = !this.open;

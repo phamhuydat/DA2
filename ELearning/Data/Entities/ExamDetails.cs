@@ -2,7 +2,7 @@
 
 namespace Data.Entities
 {
-    public class ExamDetails : AppEntityBase
+    public class ExamDetails
     {
         public int ExamId { get; set; }
         public int QuestionId { get; set; }

@@ -10,6 +10,23 @@
     // Trả về số phút tính được
     return diffMins;
 }
+function getToTalQuestionOfChapter(chuong, monhoc, dokho) {
+    var result = 0;
+    $.ajax({
+        url: "./question/getsoluongcauhoi",
+        type: "post",
+        data: {
+            chuong: chuong,
+            monhoc: monhoc,
+            dokho: dokho,
+        },
+        async: false,
+        success: function (response) {
+            result = response;
+        },
+    });
+    return result;
+}
 
 $(document).ready(() => {
     $('.jq-select2').select2();
@@ -38,11 +55,10 @@ $(document).ready(() => {
     );
 
     // bug
-
     //$.validator.addMethod(
     //    "validSoLuong",
     //    function (value, element, param) {
-    //        const chapter = $("#chuong").val() || "";
+    //        const chapter = $("#chapter").val() || "";
     //        const subjectId = $("#nhom-hp").val()
     //            ? groups[$("#nhom-hp").val()].mamonhoc
     //            : 0;
@@ -149,39 +165,47 @@ document.addEventListener("alpine:init", () => {
         _listGroup: [],
         _updinData: {
             id: 0,
-            name: "",
+            title: "",
             timeStart: "",
             timeEnd: "",
-            examTime: "",
+            workTime: 0,
             subjectId: 0,
             chapterId: [],
+            groupId: [],
             easy: 0,
             medium: 0,
             hard: 0,
+            autoExam: true,
+            mixQuestion: false,
+            mixAnswer: false,
+            submitWhenExit: false,
+            showAnswer: false,
+
         },
         choicesInstance: null,
         selectedChapters: [],
 
         init() {
-            if (this.choicesInstance) {
-                return; // Nếu đã khởi tạo rồi, không làm gì nữa
+            if (this._updinData.autoExam === true) {
+                if (this.choicesInstance) {
+                    return; // Nếu đã khởi tạo rồi, không làm gì nữa
+                }
+                // Khởi tạo Choices.js
+                this.choicesInstance = new Choices(this.$refs.selectElement, {
+                    removeItemButton: true,
+                    shouldSort: false,
+                });
+
+                // Thay thế danh sách option trong Choices.js bằng _listChapter
+                this.updateChoices();
+
+                // Lắng nghe thay đổi từ Choices.js
+                this.$refs.selectElement.addEventListener("change", (event) => {
+                    this.selectedChapters = Array.from(event.target.selectedOptions).map(
+                        (option) => option.value
+                    );
+                });
             }
-            // Khởi tạo Choices.js
-            this.choicesInstance = new Choices(this.$refs.selectElement, {
-                removeItemButton: true,
-                shouldSort: false,
-            });
-
-            // Thay thế danh sách option trong Choices.js bằng _listChapter
-            this.updateChoices();
-
-            // Lắng nghe thay đổi từ Choices.js
-            this.$refs.selectElement.addEventListener("change", (event) => {
-                this.selectedChapters = Array.from(event.target.selectedOptions).map(
-                    (option) => option.value
-                );
-            });
-            console.log(this.selectedChapters);
 
             this.LoadSubject();
         },
@@ -222,8 +246,6 @@ document.addEventListener("alpine:init", () => {
         updateChoices() {
             // Xóa tất cả các option hiện tại
             this.choicesInstance.clearChoices();
-            console.log(this._listChapter)
-
             // Thêm các option mới từ _listChapter
             this._listChapter.forEach((chapter) => {
                 this.choicesInstance.setChoices([
@@ -235,7 +257,103 @@ document.addEventListener("alpine:init", () => {
                 ]);
             });
         },
+        formatDateTime(dateTimeStr) {
+            const [date, time] = dateTimeStr.split(' ');
+            const [day, month, year] = date.split('-');
+            return `${year}-${month}-${day}T${time}:00`;
+        },
 
+        refreshData() {
+            this._updinData = {
+                id: 0,
+                title: "",
+                timeStart: "",
+                timeEnd: "",
+                workTime: 0,
+                subjectId: 0,
+                chapterId: [],
+                groupId: [],
+                easy: 0,
+                medium: 0,
+                hard: 0,
+                autoExam: true,
+                mixQuestion: false,
+                mixAnswer: false,
+                submitWhenExit: false,
+                showAnswer: false,
+
+            }
+        },
+
+        SaveExam() {
+            const selectedItems = this.choicesInstance.getValue();
+            this._updinData.chapterId = selectedItems.map(item => item.value); // Trả về mảng giá trị
+
+            var data = {
+                title: this._updinData.title,
+                timeStart: this.formatDateTime(this._updinData.timeStart),
+                timeEnd: this.formatDateTime(this._updinData.timeEnd),
+                workTime: parseInt(this._updinData.workTime, 10),
+                subjectId: parseInt(this._updinData.subjectId, 10),
+                isAutomatic: this._updinData.autoExam,
+                mixQuestion: this._updinData.mixQuestion,
+                mixAnswer: this._updinData.mixAnswer,
+                seeAnswer: this._updinData.showAnswer,
+                submitWhenExit: this._updinData.submitWhenExit,
+                eqCount: parseInt(this._updinData.easy, 10),
+                mqCount: parseInt(this._updinData.medium, 10),
+                hqCount: parseInt(this._updinData.hard, 10),
+                status: true, // Assuming status is true when saving
+                automaticExams: this._updinData.chapterId.map(chapterId => ({
+                    chapterId: chapterId
+                })),
+                handOutExams: this._updinData.groupId.map(groupId => ({
+                    groupId: groupId
+                })),
+
+                //details: [] // Assuming details are empty when adding a new exam
+            };
+
+
+            fetch("/Admin/Exam/CreateExam", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => { return response.json() })
+                .then(response => {
+                    console.log(response.data)
+                    if (response.success) {
+                        showNotification({
+                            type: 'success',
+                            message: response.message,
+                        });
+                        this.refreshData();
+
+                        if (!this._updinData.autoExam) {
+                            fetch("/Admin/Exam/AddManualExam" + data.id);
+                        }
+
+
+                    }
+                    else {
+                        showNotification({
+                            type: 'danger',
+                            message: response.message,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message);
+                    console.log(error);
+                    showNotification({
+                        type: 'danger',
+                        message: 'Lỗi server',
+                    });
+                });
+        }
 
 
     }))

@@ -150,7 +150,6 @@ namespace Web.Areas.Admin.Controllers
             }
 
             var data = await _repo.GetOneAsync<Chapter>(X => X.ChapterName == model.ChapterName);
-            model.Status = true;
 
             var chapter = _mapper.Map<Chapter>(model);
             chapter.CreatedBy = this.CurrentUserId;
@@ -183,7 +182,6 @@ namespace Web.Areas.Admin.Controllers
 
             chapter.UpdatedBy = this.CurrentUserId;
             chapter.UpdatedDate = DateTime.Now;
-            chapter.Status = true;
 
             await _repo.UpdateAsync(chapter);
             return Ok(new

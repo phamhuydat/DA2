@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "Thêm câu hỏi thủ công";
+}
+
+
+@section scripts {
+    <script src="~/AdminJs/munallyAddQuestionjs.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+}
+
+<dib x-data="addQuestion">
+    <div class="row">
+        <div class="col-lg-5 h100-scroll">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-sm d-lg-none push">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-primary w-100" data-toggle="layout"
+                                    data-action="sidebar_toggle">
+                                <i class="fa fa-bars opacity-50 me-1"></i> Menu
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-alt-primary w-100" data-toggle="class-toggle"
+                                    data-target="#side-content" data-class="d-none">
+                                <i class="fa fa-envelope opacity-50 me-1"></i> Câu hỏi
+                            </button>
+                        </div>
+                    </div>
+                    <div id="side-content" class="d-none d-lg-block push">
+                        <form action="#" method="POST" id="search-form" onsubmit="return false;">
+                            <div class="mb-4">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="search-input" name="search-input"
+                                           placeholder="Tìm kiếm câu hỏi...">
+                                    <!-- <input type="text" class="form-control" placeholder="Tìm kiếm câu hỏi.." id="search-content"> -->
+                                    <span class="input-group-text">
+                                        <i class="fa fa-fw fa-search"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Chương
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Độ khó
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group fs-sm mb-3" id="list-question">
+                            <div class="list-group-item d-flex">
+                                <div class="form-check">
+                                    <input class="form-check-input item-question" type="checkbox">
+                                    <label class="form-check-label text-muted" style="word-break: break-all;">
+                                        câu hỏi này bal balbalbalbalbalbalbalbalbalbal
+                                        balbalbalbalbalbalbalbalbalbalbalbalbalbalbalbal
+                                        balbalbalbalbalbalbalbalbalbalbalbalbalbalbal
+                                    </label>
+                                </div>
+                                <span class="badge rounded-pill bg-dark m-1 float-end h-100">
+                                    level dễ
+                                </span>
+                            </div>
+                            <div class="list-group-item d-flex">
+                                <div class="form-check">
+                                    <input class="form-check-input item-question" type="checkbox">
+                                    <label class="form-check-label text-muted" style="word-break: break-all;">
+                                        câu hỏi này bal balbalbalbalbalbalbalbalbalbal
+                                        balbalbalbalbalbalbalbalbalbalbalbalbalbalbalbal
+                                        balbalbalbalbalbalbalbalbalbalbalbalbalbalbal
+                                    </label>
+                                </div>
+                                <span class="badge rounded-pill bg-dark m-1 float-end h-100">
+                                    level dễ
+                                </span>
+                            </div>
+                        </div>
+                        <partial name="../Shared/_Pager" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7 h100-scroll">
+            <div class="px-0">
+                <div class="card card-rounded">
+                    <div class="card-body card-body-sm card-body-full bg-body-light">
+                        <div class="d-flex py-3 align-items-center">
+                            <div class="flex-shrink-0 me-3 ms-2 overlay-container overlay-right">
+                                <p class="mb-0">Số lượng: </p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <button type="button" class="btn btn-soft-primary">
+                                            Dễ
+                                            <span class="badge rounded-pill ms-1 text-black">
+                                                <span id="slcaude">0</span>/<span id="ttcaude">0</span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-soft-primary text-black">
+                                            Trung bình
+                                            <span class="badge rounded-pill bg-xwork ms-1">
+                                                <span id="slcautb">0</span>/<span id="ttcautb">0</span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-soft-primary text-black">
+                                            Khó
+                                            <span class="badge rounded-pill bg-xwork ms-1">
+                                                <span id="slcaukho">0</span>/<span id="ttcaukho">0</span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-hero btn-danger" id="save-test">
+                                            <i class="las-solid las la-save"></i> Tạo đề thi
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="text-center mb-2" id="name-test"></h4>
+                        <p class="text-center text-muted">Thời gian: <span id="test-time"></span> phút</p>
+                        <div id="list-question-of-test">
+                            <div class="question mb-3 d-flex justify-content-between">
+                                <div class="question-top px-3">
+                                    <p class="question-content fw-bold mb-3">
+                                        1. câu hỏi nè
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-12 mb-1">
+                                            <p class="mb-1">
+                                                <b>
+                                                    a
+                                                </b> nội dung câu trả lời
+                                            </p>
+                                        </div>
+                                        <div class="col-12 mb-1">
+                                            <p class="mb-1">
+                                                <b>
+                                                    a
+                                                </b> nội dung câu trả lời
+                                            </p>
+                                        </div>
+                                        <div class="col-12 mb-1">
+                                            <p class="mb-1">
+                                                <b>
+                                                    a
+                                                </b> nội dung câu trả lời
+                                            </p>
+                                        </div>
+                                        <div class="col-12 mb-1">
+                                            <p class="mb-1">
+                                                <b>
+                                                    a
+                                                </b> nội dung câu trả lời
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="btn-group-vertical btn-sm h-50" role="group">
+                                    <button type="button" class="btn btn-sm btn-info btn-up" data-bs-toggle="tooltip" data-bs-placement="left" title="Đưa lên trên"><i class=" las la-arrow-up"></i></button>
+                                    <button type="button" class="btn btn-sm btn-info btn-down" data-bs-toggle="tooltip" data-bs-placement="left" title="Đưa xuống dưới"><i class="las la-arrow-down"></i></button>
+                                    <button type="button" class="btn btn-sm btn-info btn-delete" data-bs-toggle="tooltip" data-bs-placement="left" title="Xoá câu hỏi" s><i class=" ri-delete-back-2-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dib>

@@ -3,6 +3,7 @@ using Data.Entities;
 using Web.Areas.Admin.ViewModels.Account;
 using Web.Areas.Admin.ViewModels.AnswerVM;
 using Web.Areas.Admin.ViewModels.ChapterVM;
+using Web.Areas.Admin.ViewModels.ExamVM;
 using Web.Areas.Admin.ViewModels.GroupDetailVM;
 using Web.Areas.Admin.ViewModels.GroupVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
@@ -48,6 +49,18 @@ namespace Web.WebConfig
 
             // map dữ liệu từ groupAddOrEditVM sang group
             CreateMap<GroupAddOrEditVM, Group>().ReverseMap();
+
+            // map dữ liệu từ ExamAddOrEditVM sang Exam
+            CreateMap<ExamAddOrEditVM, Exam>().ReverseMap();
+            CreateMap<Exam, ExamAddOrEditVM>().ReverseMap();
+            //map dữ liệu từ automaticExamVM sang automaticExam
+            CreateMap<AutomaticExamVM, AutomaticExam>().ReverseMap();
+            CreateMap<AutomaticExam, AutomaticExamVM>().ReverseMap();
+            //map dữ liệu từ handoutExamVM sang handoutExam
+            CreateMap<HandOutExamVM, HandOutExam>().ReverseMap();
+            CreateMap<HandOutExam, HandOutExamVM>().ReverseMap();
+
+
         }
 
 

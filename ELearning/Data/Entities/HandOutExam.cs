@@ -2,7 +2,7 @@
 
 namespace Data.Entities
 {
-    public class HandOutExam : AppEntityBase // phát bài kiểm tra
+    public class HandOutExam // phát bài kiểm tra
     {
         public int ExamId { get; set; }
         public int GroupId { get; set; }

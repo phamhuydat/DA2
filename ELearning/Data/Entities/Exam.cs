@@ -11,19 +11,21 @@ namespace Data.Entities
             results = new HashSet<Result>();
             handOutExams = new HashSet<HandOutExam>();
         }
+
         public int SubjectId { get; set; }
         public string Title { get; set; }
         public DateTime TimeStart { get; set; }
         public DateTime TimeEnd { get; set; }
-        public bool ShowWork { get; set; }      // Display
+        public int WorkTime { get; set; }       // Time to do the exam
         public bool SeeAnswer { get; set; }
         public bool MixQuestion { get; set; }
         public bool MixAnswer { get; set; }
-        public bool SubmitAndExit { get; set; } // Exit Page When Submitting
+        public bool SubmitWhenExit { get; set; } // Submit when exit
         public int EQCount { get; set; }        // number of easy questions
         public int MQCount { get; set; }        // number of medium questions
         public int HQCount { get; set; }        // number of hard questions
         public bool Status { get; set; }
+        public bool IsAutomatic { get; set; } // là tự động hay không
 
         public Subject Subject { get; set; }
         public ICollection<ExamDetails> examDetails { get; set; }

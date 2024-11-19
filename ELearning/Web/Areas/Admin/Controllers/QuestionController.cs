@@ -3,11 +3,12 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Metadata;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Packaging;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Share.Consts;
+using System.ComponentModel.DataAnnotations;
 using Web.Areas.Admin.ViewModels.AnswerVM;
 using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
@@ -15,7 +16,6 @@ using Web.Areas.Admin.ViewModels.SubjectVM;
 using Web.Common;
 using Web.WebConfig;
 using X.PagedList;
-using HtmlAgilityPack;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -230,6 +230,111 @@ namespace Web.Areas.Admin.Controllers
                 success = true,
                 message = "Xóa câu hỏi thành công"
             });
+        }
+
+        [HttpPost]
+        [AppAuthorize(AuthConst.AppQuestion.CREATE)]
+        public async Task<IActionResult> ImportFileWord(IFormFile fileWord, int subjectId, int chapterId)
+        {
+            if (fileWord == null || fileWord.Length == 0)
+            {
+                return BadRequest(new { message = "No file uploaded!" });
+            }
+
+
+            try
+            {
+                // Xử lý file Word và trả dữ liệu
+                var questions = await ProcessFile(fileWord, subjectId, chapterId);
+
+                var data = _mapper.Map<Question>(questions);
+                await _repo.AddAsync(data);
+
+                return Ok(new { message = "File imported successfully!", data = questions });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
+        }
+
+        private async Task<List<QuestionAddOrEditVM>> ProcessFile(IFormFile file, int subjectId, int chapterId)
+        {
+            var questions = new List<QuestionAddOrEditVM>();
+
+            // Save the file temporarily
+            var tempPath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+            using (var stream = new FileStream(tempPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(tempPath, false))
+            {
+                var body = wordDoc.MainDocumentPart?.Document?.Body;
+                if (body == null)
+                {
+                    throw new InvalidOperationException("The document body is null.");
+                }
+
+                // Extract paragraphs from the Word document
+                var paragraphs = body.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>()
+                                     .Select(p => p.InnerText.Trim())
+                                     .Where(text => !string.IsNullOrWhiteSpace(text))
+                                     .ToList();
+
+                // Combine paragraphs into a single string
+                var questionText = string.Join("\n", paragraphs);
+                // Split the text into question blocks based on the pattern
+
+                var questionBlocks = questionText.Split(new[] { "\n[" }, StringSplitOptions.RemoveEmptyEntries)
+                                          .Select(q => q.Trim())
+                                          .Select(q => q.StartsWith("[") ? q : "[" + q) // Ensure proper format
+                                          .ToList();
+
+                // Process each question block                                                                                                                    
+                foreach (var block in questionBlocks)
+                {
+                    var lines = block.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length < 2) continue;
+
+
+                    var ANSWER = System.Text.RegularExpressions.Regex.Replace(lines[lines.Length - 1], @"^\[\d+\]\s*", "").Trim();
+
+                    var isCol = ANSWER.Last();
+                    // Create a new question
+                    var question = new QuestionAddOrEditVM
+                    {
+                        Content = System.Text.RegularExpressions.Regex.Replace(lines[0], @"^\[\d+\]\s*", "").Trim(),
+                        Level = int.Parse(System.Text.RegularExpressions.Regex.Match(lines[0], @"\d+").Value),
+                        Options = new List<AnswerAddOrEdit>()
+                    };
+
+                    // Add options
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        var optionText = lines[i].Trim();
+                        if (optionText.StartsWith("A. ") || optionText.StartsWith("B. ") || optionText.StartsWith("C. ") || optionText.StartsWith("D. "))
+                        {
+                            question.Options.Add(new AnswerAddOrEdit
+                            {
+                                Status = optionText.First() == isCol,
+                                AnswerContent = optionText.Length > 3 ? optionText.Substring(3).Trim() : optionText.Trim(),
+                            });
+                        }
+                    }
+
+                    // Add subjectId and chapterId to the question
+                    question.SubjectId = subjectId;
+                    question.ChapterId = chapterId;
+                    questions.Add(question);
+                }
+            }
+
+            // Delete the temporary file if needed
+            System.IO.File.Delete(tempPath);
+
+            return questions;
         }
 
     }

@@ -58,6 +58,18 @@
             locale: "vi",
             dateFormat: "d-m-Y",
         });
+
+        flatpickr("#time-start", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true
+        });
+
+        flatpickr("#time-end", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i",
+            time_24hr: true
+        });
     </script>
 </body>
 </html>

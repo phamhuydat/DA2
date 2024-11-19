@@ -8,7 +8,7 @@ namespace Data.Configurations
     {
         public void Configure(EntityTypeBuilder<HandOutExam> builder)
         {
-            builder.HasKey(x => new { x.Id, x.GroupId, x.ExamId });
+            builder.HasKey(x => new { x.GroupId, x.ExamId });
 
             builder.HasOne(x => x.group)
                 .WithMany(x => x.HandOutExams)

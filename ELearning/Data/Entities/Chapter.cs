@@ -11,7 +11,6 @@ namespace Data.Entities
         }
         public int SubjectId { get; set; }
         public string ChapterName { get; set; }
-        public bool Status { get; set; }
         //fk
         public Subject Subject { get; set; }
         public virtual ICollection<Question> questions { get; set; }

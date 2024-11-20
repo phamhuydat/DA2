@@ -25,7 +25,7 @@ namespace Web.Areas.Admin.Controllers
         { }
 
         [AppAuthorize(AuthConst.AppQuestion.VIEW_DETAIL)]
-        public async Task<IActionResult> Index() => View();
+        public IActionResult Index() => View();
 
 
         [HttpGet]
@@ -39,7 +39,7 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSubject()
+        public IActionResult GetSubject()
         {
             var model = new List<Subject>();
 
@@ -49,7 +49,7 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetChapter(int subjectId)
+        public IActionResult GetChapter(int subjectId)
         {
             var data = _repo.GetAll<Chapter>()
                 .Where(c => c.SubjectId == subjectId)
@@ -82,7 +82,6 @@ namespace Web.Areas.Admin.Controllers
         }
 
 
-
         // add question
         [HttpPost]
         [Route("Admin/Question/CreateQuestion")]
@@ -106,6 +105,7 @@ namespace Web.Areas.Admin.Controllers
 
 
             var question = _mapper.Map<Question>(model);
+
 
             question.answers = model.Options.Select((option, index) => new Answer
             {
@@ -238,19 +238,25 @@ namespace Web.Areas.Admin.Controllers
         {
             if (fileWord == null || fileWord.Length == 0)
             {
-                return BadRequest(new { message = "No file uploaded!" });
+                return BadRequest(new { message = "No file uploaded!", success = false });
             }
-
-
             try
             {
                 // Xử lý file Word và trả dữ liệu
-                var questions = await ProcessFile(fileWord, subjectId, chapterId);
+                var questions = ProcessFile(fileWord, subjectId, chapterId);
 
-                var data = _mapper.Map<Question>(questions);
-                await _repo.AddAsync(data);
+                var listData = new List<Question>();
+                foreach (var item in questions)
+                {
+                    var data = _mapper.Map<Question>(item);
+                    data.CreatedBy = this.CurrentUserId;
+                    data.CreatedDate = DateTime.Now;
+                    listData.Add(data);
+                }
 
-                return Ok(new { message = "File imported successfully!", data = questions });
+                //await _repo.AddAsync(listData);
+
+                return Ok(new { message = "File imported successfully!", data = questions, success = true });
             }
             catch (Exception ex)
             {
@@ -258,7 +264,8 @@ namespace Web.Areas.Admin.Controllers
             }
         }
 
-        private async Task<List<QuestionAddOrEditVM>> ProcessFile(IFormFile file, int subjectId, int chapterId)
+        [HttpPost]
+        public List<QuestionAddOrEditVM> ProcessFile(IFormFile file, int subjectId, int chapterId)
         {
             var questions = new List<QuestionAddOrEditVM>();
 
@@ -266,7 +273,7 @@ namespace Web.Areas.Admin.Controllers
             var tempPath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
             using (var stream = new FileStream(tempPath, FileMode.Create))
             {
-                await file.CopyToAsync(stream);
+                file.CopyToAsync(stream);
             }
 
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(tempPath, false))
@@ -292,9 +299,11 @@ namespace Web.Areas.Admin.Controllers
                                           .Select(q => q.StartsWith("[") ? q : "[" + q) // Ensure proper format
                                           .ToList();
 
+                int RowIndex = 0;
                 // Process each question block                                                                                                                    
                 foreach (var block in questionBlocks)
                 {
+                    RowIndex++;
                     var lines = block.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length < 2) continue;
 
@@ -305,6 +314,7 @@ namespace Web.Areas.Admin.Controllers
                     // Create a new question
                     var question = new QuestionAddOrEditVM
                     {
+                        Id = RowIndex,
                         Content = System.Text.RegularExpressions.Regex.Replace(lines[0], @"^\[\d+\]\s*", "").Trim(),
                         Level = int.Parse(System.Text.RegularExpressions.Regex.Match(lines[0], @"\d+").Value),
                         Options = new List<AnswerAddOrEdit>()
@@ -318,6 +328,7 @@ namespace Web.Areas.Admin.Controllers
                         {
                             question.Options.Add(new AnswerAddOrEdit
                             {
+                                Id = i,
                                 Status = optionText.First() == isCol,
                                 AnswerContent = optionText.Length > 3 ? optionText.Substring(3).Trim() : optionText.Trim(),
                             });

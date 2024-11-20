@@ -13,7 +13,7 @@ using X.PagedList;
 namespace App.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(AuthenticationSchemes = AppConst.ADMIN_COOKIES_AUTH)]
+    [Authorize(AuthenticationSchemes = AppConst.COOKIES_AUTH)]
     public class AdminBaseController : Controller
     {
         protected const string AREA_NAME = "Admin";
@@ -27,6 +27,7 @@ namespace App.Web.Areas.Admin.Controllers
         };
         protected const int ROLE_ADMIN_ID = 2;
         protected const int ROLE_TEACHER_ID = 3;
+
         protected RedirectToActionResult AdminHomePage() => RedirectToAction("Index", "Home", new { area = "Admin" });
 
         protected int CurrentUserId { get => Convert.ToInt32(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)); }

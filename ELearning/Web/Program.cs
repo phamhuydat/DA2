@@ -35,7 +35,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.UseEndpoints(static endpoints =>
 {
     // Định tuyến cho client login
     endpoints.MapControllerRoute(
@@ -69,16 +69,24 @@ app.UseEndpoints(endpoints =>
             action = "Error"
         });
 
-    // Định tuyến khu vực Admin
     endpoints.MapAreaControllerRoute(
-        areaName: "Admin",
-        name: "Admin",
-        pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+      areaName: "Admin",
+      name: "Admin",
+      pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
 
     // Định tuyến cho các trang ngoài area (Client)
     endpoints.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    // Định tuyến khu vực Admin
+
+
+
 });
 
 

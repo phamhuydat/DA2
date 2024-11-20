@@ -76,7 +76,7 @@ namespace Web.Controllers
                             new Claim(AppClaimTypes.Permissions, user.Permission),
                         };
 
-            var claimsIdentity = new ClaimsIdentity(claims, AppConst.CLIENT_COOKIES_AUTH);
+            var claimsIdentity = new ClaimsIdentity(claims, AppConst.COOKIES_AUTH);
             var principal = new ClaimsPrincipal(claimsIdentity);
             var authenPropeties = new AuthenticationProperties()
             {
@@ -84,7 +84,7 @@ namespace Web.Controllers
                 IsPersistent = model.RememberMe
             };
 
-            await HttpContext.SignInAsync(AppConst.CLIENT_COOKIES_AUTH, principal, authenPropeties);
+            await HttpContext.SignInAsync(AppConst.COOKIES_AUTH, principal, authenPropeties);
             _notyf.Success("Đăng nhập thành công");
 
             string roleName = user.RoleName.ToUpper();
@@ -95,7 +95,7 @@ namespace Web.Controllers
                 var returnUrl = Request.Query["ReturnUrl"].ToString();
                 if (string.IsNullOrEmpty(returnUrl))
                 {
-                    return AdminHomePage(); // Thay thế bằng phương thức trang chủ admin của bạn
+                    return Redirect("/Admin/Home/Index"); // Thay thế bằng phương thức trang chủ admin của bạn
                 }
                 return Redirect(returnUrl);
             }
@@ -114,7 +114,7 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(AppConst.CLIENT_COOKIES_AUTH);
+            await HttpContext.SignOutAsync(AppConst.COOKIES_AUTH);
             _notyf.Information("bạn đã đăng xuất");
             return RedirectToAction("Login", "Account");
         }

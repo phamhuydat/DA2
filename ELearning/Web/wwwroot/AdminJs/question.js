@@ -35,9 +35,35 @@ $(document).ready(() => {
             "js-ckeditor": {
                 required: "Vui lòng không để trống câu hỏi.",
             },
+
         },
         errorClass: "is-invalid",
         validClass: "is-valid",
+    });
+
+    $("#form-add-doc").validate({
+        rules: {
+            "monhocfile": {
+                required: true,
+            },
+            "chuongfile": {
+                required: true,
+            },
+            "file-cau-hoi": {
+                required: true,
+            }
+        },
+        messages: {
+            "monhocfile": {
+                required: "Vui lòng không để trống môn học.",
+            },
+            "chuongfile": {
+                required: "Vui lòng không để trống chương.",
+            },
+            "file-cau-hoi": {
+                required: "Vui lòng chọn file câu hỏi.",
+            }
+        },
     });
 
 
@@ -82,6 +108,7 @@ document.addEventListener("alpine:init", () => {
             chapterId: 0,
             file: null
         },
+        _listContentFile: [],
 
         init() {
             var config = {
@@ -268,7 +295,33 @@ document.addEventListener("alpine:init", () => {
 
         handleFile(event) {
             this._importFile.file = event.target.files[0];
+
+            if (!this._importFile.file) {
+                console.log("No file selected");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", this._importFile.file); // Thêm file
+            formData.append("subjectId", parseInt(this._updinData.subjectId)); // Thêm subjectId
+            formData.append("chapterId", parseInt(this._updinData.chapterId)); // Thêm chapterId
+
+            fetch("/Admin/Question/ProcessFile", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result);
+                    this._listContentFile = result;
+                    console.log(this._listContentFile);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
         },
+
         ImportFileWord() {
             if (!this._importFile.file) {
                 console.log("khong cos file");
@@ -277,12 +330,8 @@ document.addEventListener("alpine:init", () => {
 
             const formData = new FormData();
             formData.append("fileWord", this._importFile.file); // Thêm file
-            formData.append("subjectId", this._importFile.subjectId); // Thêm subjectId
-            formData.append("chapterId", this._importFile.chapterId); // Thêm chapterId
-
-            for (let pair of formData.entries()) {
-                console.log(`${pair[0]}: ${pair[1]}`);
-            }
+            formData.append("subjectId", parseInt(this._updinData.subjectId)); // Thêm subjectId
+            formData.append("chapterId", parseInt(this._updinData.chapterId)); // Thêm chapterId
 
             fetch("/Admin/Question/ImportFileWord", {
                 method: 'POST',
@@ -310,7 +359,7 @@ document.addEventListener("alpine:init", () => {
                     console.log(error);
                     showNotification({
                         type: 'danger',
-                        message: 'Lỗi rồi',
+                        message: 'Lỗi rồi server ra mà fix di',
                     });
                 });
         },
@@ -366,7 +415,6 @@ document.addEventListener("alpine:init", () => {
 
                 // Reset _answer sau khi thêm
                 this._answer = { answersContent: '', status: false };
-
             }
             //alert('Câu trả lời đã được thêm vào danh sách!');
         },

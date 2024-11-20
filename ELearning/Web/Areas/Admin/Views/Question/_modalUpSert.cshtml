@@ -99,13 +99,13 @@
                                                     <td class="text-center">
                                                         <div class="btn-group">
                                                             <button type="button" class="btn btn-sm btn-alt-secondary btn-edit-option"
-                                                                     title="edit"
+                                                                    title="edit"
                                                                     x-on:click="EditAnswer(index)">
                                                                 <i class="ri-edit-2-line"></i>
 
                                                             </button>
                                                             <button type="button" class="btn btn-sm btn-alt-secondary btn-delete-option"
-                                                                     title="delete"
+                                                                    title="delete"
                                                                     x-on:click="DeleteAnswer(index)">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </button>
@@ -138,7 +138,7 @@
                                         <p>
                                             <button type="button" class="btn btn-primary mt-3"
                                                     x-on:click="AddOrEditAnswer()">
-                                                    Lưu đáp án
+                                                Lưu đáp án
                                             </button>
 
                                             <button type="button" class="btn btn-danger mt-3" x-on:click="CloseAnswer()">
@@ -160,16 +160,16 @@
                     <!--Thêm bằng Word or Ex-->
                     <div class="tab-pane" id="btabs-alt-static-profile" role="tabpanel"
                          aria-labelledby="btabs-static-profile-tab" tabindex="0">
-                        <form>
+                        <form id="form-add-doc">
                             <div class="mb-4">
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="" class="form-label">Môn học</label>
+                                        <label class="form-label">Môn học</label>
                                         <select class="form-select"
                                                 x-model="_updinData.subjectId"
                                                 id="monhocfile"
                                                 @@change="LoadChapter()" style="width: 100%;">
-                                            <option value="" x-text="_updinData.chapterName" disabled selected>Choose one...</option>
+                                            <option value="" disabled selected>Choose one...</option>
                                             <template x-for="item in _listSubject">
                                                 <option :value="item.id" x-text="item.subjectName"></option>
                                             </template>
@@ -181,6 +181,7 @@
                                                 x-model="_updinData.chapterId"
                                                 style="width: 100%;"
                                                 id="chuongfile">
+                                            <option value="" disabled selected>Choose one...</option>
                                             <template x-for="item in _listChapter">
                                                 <option :value="item.id" x-text="item.chapterName"></option>
                                             </template>
@@ -191,26 +192,47 @@
                             <div class="mb-4">
                                 <label class="form-label" for="file-cau-hoi">Nội dung</label>
                                 <input class="form-control" type="file" id="file-cau-hoi"
-                                        accept=".docx" required
-                                        @@change="handleFile"  />
+                                       accept=".docx" required
+                                       @@change="handleFile" />
                             </div>
                             <div class="mb-4">
                                 <em>
-                                    Vui lòng soạn câu hỏi theo đúng định dạng. 
+                                    Vui lòng soạn câu hỏi theo đúng định dạng.
                                     <a href="~/template/mau_import_cau_hoi.docx">Tải về file mẫu Docx</a>
                                 </em>
                             </div>
                             <div class="mb-4 d-flex justify-content-between">
-                                <button type="button" class="btn btn-hero btn-primary" id="btnAddExcel">
-                                    <i class="fa fa-cloud-arrow-up"></i>Thêm file Excel
-                                </button>
                                 <button type="button" class="btn btn-hero btn-primary"
                                         x-on:click="ImportFileWord()">
                                     <i class="fa fa-cloud-arrow-up"></i> Thêm vào hệ thống
                                 </button>
                             </div>
                         </form>
-                        <div id="content-file"></div>
+
+
+                        <div id="content-file">
+                            <div class="question rounded border mb-3">
+                                <template x-for="question in _listContentFile">
+                                    <div class="question-top p-3">
+                                        <div class="fw-bold mb-3 d-flex">
+                                            <b x-text="question.id"></b>.
+                                            <span x-text="question.content"></span>
+                                        </div>
+                                        <div class="row">
+                                            <template x-for="answer in question.options">
+                                                <div :class="answer.status ? 'col-6 mb-1 text-primary' : 'col-6 mb-1' ">
+                                                    <p class="mb-1" >
+                                                        <b x-text="String.fromCharCode(64 + answer.id)">
+                                                        </b>
+                                                        <span x-text="answer.answerContent"></span>
+                                                    </p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

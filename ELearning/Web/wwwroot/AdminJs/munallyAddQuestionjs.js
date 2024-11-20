@@ -7,7 +7,20 @@ document.addEventListener("alpine:init", () => {
         _modal: {},
 
 
-        init() { }
+        init() {
+
+            this.refreshData();
+
+        },
+
+
+
+        // load list question in exam
+        refreshData() {
+
+        }
+
+
 
 
 

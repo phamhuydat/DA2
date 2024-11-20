@@ -26,23 +26,30 @@ namespace Web.WebConfig
 
             // Cấu hình đăng nhập
 
-            services.AddAuthentication(options =>
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultScheme = AppConst.CLIENT_COOKIES_AUTH; // Scheme mặc định
+            //     options.DefaultChallengeScheme = AppConst.ADMIN_COOKIES_AUTH; // Scheme để thách thức
+            // })
+            //.AddCookie(AppConst.ADMIN_COOKIES_AUTH, options =>  // Đăng ký scheme cho Admin
+            //{
+            //    options.LoginPath = AppConst.ADMIN_LOGIN_PATH; // Đường dẫn cho admin login
+            //    options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
+            //    options.Cookie.HttpOnly = true;
+            //})
+            //.AddCookie(AppConst.CLIENT_COOKIES_AUTH, options =>
+            //{
+            //    options.LoginPath = AppConst.LOGIN_PATH; // Đường dẫn cho client login
+            //    options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
+            //    options.Cookie.HttpOnly = true;
+            //});
+            services.AddAuthentication(AppConst.COOKIES_AUTH).AddCookie(options =>
             {
-                options.DefaultScheme = AppConst.CLIENT_COOKIES_AUTH; // Scheme mặc định
-                options.DefaultChallengeScheme = AppConst.ADMIN_COOKIES_AUTH; // Scheme để thách thức
-            })
-           .AddCookie(AppConst.CLIENT_COOKIES_AUTH, options =>
-           {
-               options.LoginPath = AppConst.LOGIN_PATH; // Đường dẫn cho client login
-               options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
-               options.Cookie.HttpOnly = true;
-           })
-           .AddCookie(AppConst.ADMIN_COOKIES_AUTH, options =>  // Đăng ký scheme cho Admin
-           {
-               options.LoginPath = AppConst.ADMIN_LOGIN_PATH; // Đường dẫn cho admin login
-               options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
-               options.Cookie.HttpOnly = true;
-           });
+                options.LoginPath = AppConst.LOGIN_PATH;
+                options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
+                options.Cookie.HttpOnly = true;
+            });
+
 
 
 

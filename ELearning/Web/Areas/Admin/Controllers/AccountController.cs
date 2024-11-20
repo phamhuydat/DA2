@@ -59,7 +59,7 @@ namespace Web.Areas.Admin.Controllers
                             new Claim(AppClaimTypes.Permissions, user.Permission),
                         };
 
-            var claimsIdentity = new ClaimsIdentity(claims, AppConst.ADMIN_COOKIES_AUTH);
+            var claimsIdentity = new ClaimsIdentity(claims, AppConst.COOKIES_AUTH);
             var principal = new ClaimsPrincipal(claimsIdentity);
 
             var authenPropeties = new AuthenticationProperties()
@@ -68,7 +68,7 @@ namespace Web.Areas.Admin.Controllers
                 IsPersistent = model.RememberMe
             };
 
-            await HttpContext.SignInAsync(AppConst.ADMIN_COOKIES_AUTH, principal, authenPropeties);
+            await HttpContext.SignInAsync(AppConst.COOKIES_AUTH, principal, authenPropeties);
 
             // tạo folder khi đăng nhập
             //CreateDirIfNotExist(model.Username);
@@ -93,15 +93,8 @@ namespace Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(AppConst.ADMIN_COOKIES_AUTH);
+            await HttpContext.SignOutAsync(AppConst.COOKIES_AUTH);
             return Redirect("/admin/account/login");
         }
-
-        public async Task<IActionResult> Register()
-        {
-            return View();
-        }
-
-
     }
 }

@@ -109,6 +109,23 @@ namespace Web.Areas.Admin.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetExam(int id)
+        {
+            var exam = await _repo.GetOneAsync<Exam>(e => e.Id == id);
+            var examVM = _mapper.Map<ExamAddOrEditVM>(exam);
+            return Ok(examVM);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetDetailExam(int id)
+        {
+            // load list question to exam
+
+            var exam = await _repo.GetOneAsync<Exam>(e => e.Id == id);
+            var examVM = _mapper.Map<ExamAddOrEditVM>(exam);
+            return Ok(examVM);
+        }
+
 
         [HttpGet]
         public IActionResult EditExam(int id)

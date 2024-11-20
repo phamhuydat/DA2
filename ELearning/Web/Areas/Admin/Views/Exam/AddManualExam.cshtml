@@ -31,11 +31,10 @@
                         <form action="#" method="POST" id="search-form" onsubmit="return false;">
                             <div class="mb-4">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="search-input" name="search-input"
+                                    <input type="text" class="form-control" id="search-input"
                                            placeholder="Tìm kiếm câu hỏi...">
-                                    <!-- <input type="text" class="form-control" placeholder="Tìm kiếm câu hỏi.." id="search-content"> -->
                                     <span class="input-group-text">
-                                        <i class="fa fa-fw fa-search"></i>
+                                        <i class="las la-search"></i>
                                     </span>
                                 </div>
                             </div>
@@ -56,9 +55,9 @@
                                     Độ khó
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" >Dễ</a>
+                                    <a class="dropdown-item" >Trung bình</a>
+                                    <a class="dropdown-item" >Khó</a>
                                 </div>
                             </div>
                         </div>
@@ -113,15 +112,17 @@
                                                 <span id="slcaude">0</span>/<span id="ttcaude">0</span>
                                             </span>
                                         </button>
-                                        <button type="button" class="btn btn-soft-primary text-black">
+
+                                        <button type="button" class="btn btn-soft-primary ">
                                             Trung bình
-                                            <span class="badge rounded-pill bg-xwork ms-1">
+                                            <span class="badge rounded-pill bg-xwork ms-1 text-black">
                                                 <span id="slcautb">0</span>/<span id="ttcautb">0</span>
                                             </span>
                                         </button>
-                                        <button type="button" class="btn btn-soft-primary text-black">
+                                        
+                                        <button type="button" class="btn btn-soft-primary">
                                             Khó
-                                            <span class="badge rounded-pill bg-xwork ms-1">
+                                            <span class="badge rounded-pill bg-xwork ms-1 text-black">
                                                 <span id="slcaukho">0</span>/<span id="ttcaukho">0</span>
                                             </span>
                                         </button>
@@ -148,7 +149,7 @@
                                         <div class="col-12 mb-1">
                                             <p class="mb-1">
                                                 <b>
-                                                    a
+                                                    a)
                                                 </b> nội dung câu trả lời
                                             </p>
                                         </div>

@@ -6,6 +6,7 @@ namespace Data.Entities
     {
         public int ExamId { get; set; }
         public int QuestionId { get; set; }
+        public int? DisplayOrder { get; set; }
 
         public Exam Exam { get; set; }
         public Question Question { get; set; }

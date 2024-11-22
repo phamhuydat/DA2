@@ -145,7 +145,6 @@ document.addEventListener("alpine:init", () => {
                 .then(x => x.json())
                 .then(json => {
                     this._listGroups = json;
-                    console.log(this._listGroups);
                 })
                 .catch(err => {
                     console.log(err);

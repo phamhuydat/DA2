@@ -172,20 +172,25 @@ document.addEventListener("alpine:init", () => {
             subjectId: 0,
             chapterId: [],
             groupId: [],
-            easy: 0,
-            medium: 0,
-            hard: 0,
+            eqCount: 0,
+            mqCount: 0,
+            hqCount: 0,
             autoExam: true,
             mixQuestion: false,
             mixAnswer: false,
             submitWhenExit: false,
             showAnswer: false,
-
         },
         choicesInstance: null,
         selectedChapters: [],
 
+
         init() {
+            if (this.getIdFromUrl() != "createExam") {
+                this.LoadDataEdit();
+                this.LoadListGroup();
+            }
+
             if (this._updinData.autoExam === true) {
                 if (this.choicesInstance) {
                     return; // Nếu đã khởi tạo rồi, không làm gì nữa
@@ -206,9 +211,27 @@ document.addEventListener("alpine:init", () => {
                     );
                 });
             }
-
             this.LoadSubject();
+
         },
+
+        getIdFromUrl() {
+            const pathSegments = window.location.pathname.split('/');
+            return pathSegments[pathSegments.length - 1];
+        },
+
+        // load data khi edit exam
+        LoadDataEdit() {
+            fetch(`/Admin/Exam/GetExam/${this.getIdFromUrl()}`)
+                .then(response => response.json())
+                .then(data => {
+                    this._updinData = data.model;
+                    this.LoadListGroup(this._updinData.subjectId);
+                }).catch(err => {
+                    console.log(err);
+                });
+        },
+
         LoadSubject() {
             fetch("/Admin/Exam/GetSubject")
                 .then(x => x.json())
@@ -220,20 +243,22 @@ document.addEventListener("alpine:init", () => {
                 });
         },
         LoadChapter() {
-            fetch(`/Admin/Exam/GetChapter?subjectId=${this._updinData.subjectId
-                }`)
+
+            fetch(`/Admin/Exam/GetChapter?subjectId=${this._updinData.subjectId}`)
                 .then(x => x.json())
                 .then(json => {
                     this._listChapter = json;
                     this.updateChoices();
+                    console.log(this._listChapter)
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
 
-        LoadListGroup() {
-            fetch(`/Admin/Exam/GetListGroup?subjectId=${this._updinData.subjectId}`)
+        LoadListGroup(id) {
+            console.log(id)
+            fetch(`/Admin/Exam/GetListGroup?subjectId=${id}`)
                 .then(x => x.json())
                 .then(json => {
                     this._listGroup = json;
@@ -260,7 +285,7 @@ document.addEventListener("alpine:init", () => {
         formatDateTime(dateTimeStr) {
             const [date, time] = dateTimeStr.split(' ');
             const [day, month, year] = date.split('-');
-            return `${year}-${month}-${day}T${time}:00`;
+            return `${year} - ${month} - ${day}T${time}:00`;
         },
 
         refreshData() {
@@ -300,9 +325,9 @@ document.addEventListener("alpine:init", () => {
                 mixAnswer: this._updinData.mixAnswer,
                 seeAnswer: this._updinData.showAnswer,
                 submitWhenExit: this._updinData.submitWhenExit,
-                eqCount: parseInt(this._updinData.easy, 10),
-                mqCount: parseInt(this._updinData.medium, 10),
-                hqCount: parseInt(this._updinData.hard, 10),
+                eqCount: parseInt(this._updinData.eqCount, 10),
+                mqCount: parseInt(this._updinData.mqCount, 10),
+                hqCount: parseInt(this._updinData.hqCount, 10),
                 status: true, // Assuming status is true when saving
                 automaticExams: this._updinData.chapterId.map(chapterId => ({
                     chapterId: chapterId
@@ -330,13 +355,11 @@ document.addEventListener("alpine:init", () => {
                             type: 'success',
                             message: response.message,
                         });
-                        this.refreshData();
 
                         if (!this._updinData.autoExam) {
                             fetch("/Admin/Exam/AddManualExam" + data.id);
                         }
-
-
+                        this.refreshData();
                     }
                     else {
                         showNotification({

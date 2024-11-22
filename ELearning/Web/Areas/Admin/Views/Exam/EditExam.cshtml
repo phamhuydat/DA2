@@ -1,12 +1,12 @@
 ﻿@{
-    ViewBag.Title = "Tạo đề thi";
+    ViewBag.Title = "Chỉnh sửa bài thi";
 }
 
 
-@section scripts{
+@section scripts {
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
-    <script src="~/AdminJs/addExam.js" asp-append-version="true" ></script>
+    <script src="~/AdminJs/addExam.js" asp-append-version="true"></script>
     <script src="~/assets/libs/prismjs/prism.js"></script>
     <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
 }
@@ -17,14 +17,14 @@
             <div class="card">
                 <form class="form-add-Exam">
                     <div class="card-header">
-                        <h3 class="card-title">Thêm đề thi</h3>
+                        <h3 class="card-title">Cập nhật đề thi</h3>
                     </div>
                     <div class="card-body">
                         <div class="mb-4">
                             <label class="form-label" for="name-exam">Tên đề kiểm tra</label>
-                            <input type="text" class="form-control" id="name-exam" 
-                                x-model="_updinData.title"
-                                    placeholder="Nhập tên đề kiểm tra">
+                            <input type="text" class="form-control" id="name-exam"
+                                   x-model="_updinData.title"
+                                   placeholder="Nhập tên đề kiểm tra">
                         </div>
 
                         <div class="row mb-4">
@@ -33,7 +33,7 @@
                                     Thời gian bắt đầu
                                 </label>
                                 <input type="text" class="form-control"
-                                       data-provider="flatpickr" data-date-format="d-m-Y"
+                                       data-provider="flatpickr" data-date-format="d-m-Y H:i"
                                        data-enable-time
                                        id="time-start"
                                        x-model="_updinData.timeStart"
@@ -43,7 +43,7 @@
                             <div class="col-xl-6">
                                 <label class="form-label">Thời gian kết thúc</label>
                                 <input type="text" class="form-control"
-                                       data-provider="flatpickr" data-date-format="d-m-Y"
+                                       data-provider="flatpickr" data-date-format="d-m-Y H:i"
                                        data-enable-time
                                        id="time-end"
                                        x-model="_updinData.timeEnd"
@@ -57,7 +57,7 @@
                                 <span class="input-group-text">Thời gian làm bài</span>
                                 <input type="number" class="form-control text-center"
                                        id="exam-time"
-                                        x-model="_updinData.workTime">
+                                       x-model="_updinData.workTime">
                                 <span class="input-group-text">phút</span>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                                         <select class="form-select js-select2"
                                                 x-model="_updinData.subjectId"
                                                 id="nhom-hp" name="nhom-hp"
-                                                @@change="LoadChapter(); LoadListGroup(_updinData.subjectId)">
+                                                @@change="LoadChapter(); LoadListGroup()">
                                             <option value="" selected>Choose one...</option>
                                             <template x-for="item in _listSubject">
                                                 <option :value="item.id" x-text="item.subjectName"></option>
@@ -83,15 +83,15 @@
                                     <div class="row">
                                         <template x-if="_listGroup.length === 0">
                                             <div class="text-center fs-sm">
-                                                <img style="width: 100px" 
-                                                    src="~/assets/images/media/empty_data.png" />
+                                                <img style="width: 100px"
+                                                     src="~/assets/images/media/empty_data.png" />
                                             </div>
                                         </template>
                                         <template x-for="item in _listGroup" :key="item.id">
                                             <div class="col-4">
                                                 <div class="form-check">
-                                                    <input class="form-check-input select-group-item" 
-                                                            type="checkbox" :value="item.id" x-model="_updinData.groupId">
+                                                    <input class="form-check-input select-group-item"
+                                                           type="checkbox" :value="item.id" x-model="_updinData.groupId" >
                                                     <label class="form-check-label" x-text="item.groupName"></label>
                                                 </div>
                                             </div>
@@ -101,11 +101,9 @@
                             </div>
                         </div>
 
-
                         <div :class="_updinData.autoExam ? 'mb-4' : 'mb-4 d-none' ">
                             <label class="form-label">Chương</label>
                             <select class="form-control"
-                                    
                                     id="choices-multiple-remove-button chapter"
                                     x-ref="selectElement"
                                     multiple>
@@ -117,8 +115,8 @@
                                 <div class="col-4">
                                     <label class="form-label" for="coban">Số câu dễ</label>
                                     <input type="number" class="form-control" x-model="_updinData.eqCount">
-                                </div>                                                            
-                                <div class="col-4">                                               
+                                </div>
+                                <div class="col-4">
                                     <label class="form-label" for="trungbinh">Số câu trung bình</label>
                                     <input type="number" class="form-control" x-model="_updinData.mqCount">
                                 </div>
@@ -143,10 +141,10 @@
             <div class="card">
                 <div class="card-header align-items-center">
                     <h4 class="card-title mb-0 flex-grow-1">CẤU HÌNH</h4>
-                </div>                                                                          
+                </div>
                 <div id="side-content" class="card-body">
                     <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" type="checkbox"id="autoExam" x-model="_updinData.autoExam" checked>
+                        <input class="form-check-input" type="checkbox" id="autoExam" x-model="_updinData.autoExam" checked>
                         <label class="form-check-label" for="tudongsoande">Tự động tạo câu hỏi</label>
                     </div>
                     <div class="form-check form-switch mb-2 d-none">

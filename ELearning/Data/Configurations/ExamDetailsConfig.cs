@@ -12,7 +12,7 @@ namespace Data.Configurations
 
             builder.HasOne(x => x.Question)
                 .WithMany(x => x.ExamDetails)
-                .HasForeignKey(x => x.ExamId);
+                .HasForeignKey(x => x.QuestionId);
         }
     }
 }

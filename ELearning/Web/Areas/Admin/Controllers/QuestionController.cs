@@ -169,21 +169,6 @@ namespace Web.Areas.Admin.Controllers
                     answer.UpdatedBy = this.CurrentUserId;
                     answer.UpdatedDate = DateTime.Now;
                 }
-
-                //else
-                //{
-                //    var newAnswer = new Answer
-                //    {
-                //        AnswerContent = option.AnswerContent,
-                //        Status = option.Status,
-                //        QuestionId = questionOld.Id,
-                //        CreatedBy = this.CurrentUserId,
-                //        CreatedDate = DateTime.Now,
-                //        UpdatedBy = this.CurrentUserId,
-                //        UpdatedDate = DateTime.Now
-                //    };
-                //    questionOld.answers.Add(newAnswer);
-                //}
             }
 
             // Xóa các câu trả lời không có trong model.Options
@@ -254,7 +239,7 @@ namespace Web.Areas.Admin.Controllers
                     listData.Add(data);
                 }
 
-                //await _repo.AddAsync(listData);
+                await _repo.AddAsync(listData);
 
                 return Ok(new { message = "File imported successfully!", data = questions, success = true });
             }

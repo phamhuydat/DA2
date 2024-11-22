@@ -290,12 +290,5 @@ document.addEventListener("alpine:init", () => {
                 });
         }
 
-
-
-
-
-
-
-
     }))
 });

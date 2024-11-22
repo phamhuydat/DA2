@@ -35,10 +35,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(static endpoints =>
-{
-    // Định tuyến cho client login
-    endpoints.MapControllerRoute(
+
+app.MapControllerRoute(
         name: "clientLogin",
         pattern: "login",  // Không cần dấu `/` ở đầu
         defaults: new
@@ -47,20 +45,18 @@ app.UseEndpoints(static endpoints =>
             action = "Login"
         });
 
-    // Định tuyến cho admin login
-    _ = endpoints.MapAreaControllerRoute(
-        areaName: "Admin",
-        name: "adminLogin",
-        pattern: "admin/login",  // Sử dụng đường dẫn khác cho admin
-        defaults: new
-        {
-            controller = "Account",
-            action = "Login",
-            area = "Admin"
-        });
+app.MapAreaControllerRoute(
+  areaName: "Admin",
+  name: "adminLogin",
+  pattern: "admin/login",  // Sử dụng đường dẫn khác cho admin
+  defaults: new
+  {
+      controller = "Account",
+      action = "Login",
+      area = "Admin"
+  });
 
-    // Đường dẫn cho trang lỗi
-    endpoints.MapControllerRoute(
+app.MapControllerRoute(
         name: "error",
         pattern: "error/{statusCode}",
         defaults: new
@@ -69,25 +65,19 @@ app.UseEndpoints(static endpoints =>
             action = "Error"
         });
 
-    endpoints.MapAreaControllerRoute(
-      areaName: "Admin",
-      name: "Admin",
-      pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+app.MapAreaControllerRoute(
+  areaName: "Admin",
+  name: "Admin",
+  pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
 
-    // Định tuyến cho các trang ngoài area (Client)
-    endpoints.MapControllerRoute(
-            name: "areas",
-            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+// Định tuyến cho các trang ngoài area (Client)
+app.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-
-    // Định tuyến khu vực Admin
-
-
-
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
 app.Run();

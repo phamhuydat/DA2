@@ -35,7 +35,7 @@ namespace Web.Controllers
                 _notyf.Error("Vui lòng điền đủ thông tin");
                 return View(model);
             }
-            var user = await _repository.GetOneAsync<Users, UserDataForApp>
+            var user = await _repo.GetOneAsync<Users, UserDataForApp>
                 (
                     where: x => x.MSSV == model.MSSV.ToString(),
                     AutoMapperProfile.LoginConf
@@ -52,10 +52,10 @@ namespace Web.Controllers
             }
             if (user.BlockedTo.HasValue && user.BlockedTo.Value <= DateTime.Now)
             {
-                var data = await _repository.FindAsync<Users>(user.Id);
+                var data = await _repo.FindAsync<Users>(user.Id);
                 data.BlockedTo = null;
                 data.BlockedBy = null;
-                await _repository.UpdateAsync(data);
+                await _repo.UpdateAsync(data);
             }
 
 

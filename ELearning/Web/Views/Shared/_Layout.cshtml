@@ -35,6 +35,7 @@
          @RenderBody()
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- JAVASCRIPT -->
     <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
 
@@ -46,12 +47,19 @@
 
     <script src="~/assets/js/pages/plugins/lord-icon-2.1.0.js" asp-append-version="true"></script>
 
+    <script src="~/assets/js/site.js" asp-append-version="true"></script>
+
     @RenderSection("scripts", required: false)
 
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+
+    <script src="~/lib/bootstrap-notify/js/bootstrap-notify.js"></script>
     <script type="text/javascript" src="@Url.Content("~/assets/libs/choices.js/public/assets/scripts/choices.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/assets/libs/flatpickr/flatpickr.min.js")"></script>
 
     <script src="~/assets/js/app.js" asp-append-version="true"></script>
+    <script defer src="~/lib/alpinejs/cdn.js"></script>
+
 
     <script>
         flatpickr("#datepicker", {
@@ -61,13 +69,13 @@
 
         flatpickr("#time-start", {
             enableTime: true,
-            dateFormat: "d-m-Y H:i",
+            dateFormat: "d-m-Y",
             time_24hr: true
         });
 
         flatpickr("#time-end", {
             enableTime: true,
-            dateFormat: "d-m-Y H:i",
+            dateFormat: "d-m-Y",
             time_24hr: true
         });
     </script>

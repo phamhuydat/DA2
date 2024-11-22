@@ -11,6 +11,7 @@ using Web.Areas.Admin.ViewModels.Role;
 using Web.Areas.Admin.ViewModels.SubjectVM;
 using Web.Areas.Admin.ViewModels.user;
 using Web.ViewModels.Account;
+using Web.ViewModels.ClientGroupVM;
 
 namespace Web.WebConfig
 {
@@ -53,12 +54,23 @@ namespace Web.WebConfig
             // map dữ liệu từ ExamAddOrEditVM sang Exam
             CreateMap<ExamAddOrEditVM, Exam>().ReverseMap();
             CreateMap<Exam, ExamAddOrEditVM>().ReverseMap();
+
             //map dữ liệu từ automaticExamVM sang automaticExam
             CreateMap<AutomaticExamVM, AutomaticExam>().ReverseMap();
             CreateMap<AutomaticExam, AutomaticExamVM>().ReverseMap();
+
             //map dữ liệu từ handoutExamVM sang handoutExam
             CreateMap<HandOutExamVM, HandOutExam>().ReverseMap();
             CreateMap<HandOutExam, HandOutExamVM>().ReverseMap();
+
+            //map dữ liệu từ ExamDetailsVM sang ExamDetails
+            CreateMap<ExamDetailsVM, ExamDetails>()
+              .ForMember(dest => dest.QuestionId, opt => opt.MapFrom(src => src.QuestionId))
+              .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.ExamId))
+              .ForMember(dest => dest.DisplayOrder, opt => opt.MapFrom(src => src.DisplayOrder))
+              .ReverseMap();
+
+
 
 
         }
@@ -94,6 +106,21 @@ namespace Web.WebConfig
         });
 
 
+        // cấu hình mapper cho ExamController, action Index
+        public static MapperConfiguration ExamIndexConf = new MapperConfiguration(mapper =>
+        {
+            mapper.CreateMap<Exam, ListExamVM>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.TimeStart, opt => opt.MapFrom(src => src.TimeStart))
+                .ForMember(dest => dest.TimeEnd, opt => opt.MapFrom(src => src.TimeEnd))
+                .ForMember(dest => dest.ListGroup, opt => opt.MapFrom
+                (
+                    uEntity => string.Join(", ", uEntity.handOutExams.Select(p => p.group.GroupName))
+                ))
+                .ReverseMap();
+        });
+
+
         // Cấu hình mapping cho QuestionController, action Index AppQuestion xang ListQuestionVM
         public static MapperConfiguration QuestionIndexConf = new(mapper =>
         {
@@ -101,6 +128,16 @@ namespace Web.WebConfig
                 .ForMember(qItem => qItem.SubjectName, opts => opts.MapFrom(qEntity => qEntity.subject.SubjectName))
                 .ForMember(qItem => qItem.ChapterName, opts => opts.MapFrom(qEntity => qEntity.chapter.ChapterName))
                 .ForMember(qItem => qItem.Answers, opts => opts.MapFrom(qEntity => qEntity.answers)).ReverseMap();
+        });
+
+        // cấu hình mapping cho QuestionController, Question xang QuestionAddOrEditVM
+        public static MapperConfiguration QuestionAddOrEditConf = new(mapper =>
+        {
+            mapper.CreateMap<Question, QuestionAddOrEditVM>()
+                .ForMember(qItem => qItem.SubjectId, opts => opts.MapFrom(qEntity => qEntity.SubjectId))
+                .ForMember(qItem => qItem.ChapterId, opts => opts.MapFrom(qEntity => qEntity.ChapterId))
+                .ForMember(qItem => qItem.Level, opts => opts.MapFrom(qEntity => qEntity.Level))
+                .ForMember(qItem => qItem.Options, opts => opts.MapFrom(qEntity => qEntity.answers)).ReverseMap();
         });
 
         // Cấu hình mapping cho SubjectController, action Index
@@ -152,9 +189,9 @@ namespace Web.WebConfig
 
         // cấu hình mapper cho GroupDetailController, action ListUserGroup
 
-        public static MapperConfiguration GroupDetailIndexConf => new MapperConfiguration(cfg =>
+        public static MapperConfiguration GroupDetailIndexConf => new MapperConfiguration(mapper =>
         {
-            cfg.CreateMap<GroupDetails, ListUserGroupVM>()
+            mapper.CreateMap<GroupDetails, ListUserGroupVM>()
                 .ForMember(dest => dest.Mssv, opt => opt.MapFrom(src => src.User.MSSV))
                 .ForMember(dest => dest.fullName, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
@@ -163,6 +200,21 @@ namespace Web.WebConfig
                 .ForMember(dest => dest.GroupName, opt => opt.MapFrom(src => src.Group.GroupName))
                 .ReverseMap();
         });
+
+
+        public static MapperConfiguration GroupIndexClientConf => new MapperConfiguration(mapper =>
+        {
+            // map dữ liệu từ group xang listclientgroupvm
+            mapper.CreateMap<Group, ListGroupClientVM>()
+                .ForMember(vm => vm.GroupName, opts => opts.MapFrom(entity => entity.GroupName))
+                .ForMember(vm => vm.TeacherName, opts => opts.MapFrom(entity => entity.Teacher != null ? "GV: " + entity.Teacher : "Chưa phân giảng viên"))
+                .ForMember(vm => vm.SubjectName, opts => opts.MapFrom(entity => entity.subject.SubjectName))
+                .ForMember(vm => vm.AcademicYear, opts => opts.MapFrom(entity => entity.AcademicYear))
+                .ForMember(vm => vm.Semester, opts => opts.MapFrom(entity => entity.Semester))
+                .ForMember(vm => vm.DisplayOrder, opts => opts.MapFrom(entity => entity.DisplayOrder))
+                .ReverseMap();
+        });
+
 
     }
 }

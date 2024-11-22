@@ -5,8 +5,10 @@ using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
+using Share.Consts;
 using System.Drawing;
 using Web.Areas.Admin.ViewModels.user;
+using Web.Common;
 using Web.WebConfig;
 
 namespace Web.Areas.Admin.Controllers
@@ -18,7 +20,8 @@ namespace Web.Areas.Admin.Controllers
         {
 
         }
-        public async Task<IActionResult> Index(int page = 1, int size = 10)
+
+        public IActionResult Index()
         {
 
             return View();

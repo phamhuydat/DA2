@@ -72,7 +72,6 @@
 		<!-- /.content-wrapper -->
 	</div>
 
-	@* @await Component.InvokeAsync("Notyf") *@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -101,6 +100,17 @@
 			altInput: true,
 			altFormat: "d-m-Y",       // Định dạng hiển thị cho người dùng
 			dateFormat: "Y-m-d"        // Định dạng gửi lên server để ASP.NET nhận diện
+		});
+		flatpickr("#time-start", {
+			enableTime: true,
+			dateFormat: "d-m-Y",
+			time_24hr: true
+		});
+
+		flatpickr("#time-end", {
+			enableTime: true,
+			dateFormat: "d-m-Y",
+			time_24hr: true
 		});
 	</script>
 </body>

@@ -4,16 +4,6 @@ $.getJSON("./account/getRole", function (data, textStatus, jqXHR) {
 });
 
 $(document).ajaxStop(function () {
-    //$("[data-role]").each(function () {
-    //    if (
-    //        role[`${$(this).data("role")}`] === undefined ||
-    //        !role[`${$(this).data("role")}`].includes($(this).data("action"))
-    //    ) {
-    //        $(this).remove();
-    //    } else {
-    //        $(this).addClass("show");
-    //    }
-    //});
 
     $(".col-action").each(function () {
         if ($(this).children().length == 0) {

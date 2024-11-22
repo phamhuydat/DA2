@@ -15,17 +15,17 @@ namespace Web.Controllers
     public class BaseController : Controller
     {
         protected readonly IMapper _mapper;
-        protected readonly GenericRepository _repository;
+        protected readonly GenericRepository _repo;
         //private readonly ILog _logger;
         protected int CurrentUserId { get => Convert.ToInt32(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)); }
         protected readonly string ADMIN = "admin";
         protected readonly string TEACHER = "teacher";
         protected readonly string STUDENT = "student";
 
-        public BaseController(GenericRepository repository, IMapper mapper)
+        public BaseController(GenericRepository repo, IMapper mapper)
         {
             _mapper = mapper;
-            _repository = repository;
+            _repo = repo;
         }
         protected void SetErrorMesg(string mesg, bool modelStateIsInvalid = false)
         {

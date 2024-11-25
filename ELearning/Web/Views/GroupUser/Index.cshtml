@@ -10,7 +10,8 @@
 }
 
 @section scripts{
-    <script src="~/clientjs/client_group.js"></script>
+    <script src="~/clientjs/client_group.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
 }
 
 
@@ -18,19 +19,25 @@
 
     <div class="page-content">
         <div class="container-fluid">
-
-
             <div x-data="clientGroup">
                 <!-- start page title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                             <h4 class="mb-sm-0">Nhóm học phần</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);"></a>Nhóm</li>
+                                    <li class="breadcrumb-item active">Danh sách</li>
+                                </ol>
+                            </div>
+
                         </div>
-                    </div>
+                    </div>                            
                 </div>
                 <!-- end page title -->
-
+                                                                                
                 <div class="card">
                     <div class="card-body">
                         <div class="row g-2">
@@ -108,7 +115,7 @@
                                                     <div class="row g-sm">
                                                         <div class="col-12">
                                                             <button class="btn w-100 btn-alt-secondary btn-view-group" type="button" data-bs-toggle="offcanvas" data-bs-target="#member-overview"
-                                                                    aria-controls="offcanvasExample" x-on:click="LoadDataGroup(item.id)">
+                                                                    aria-controls="offcanvasExample" x-on:click="LoadInfoGroup(item.id)">
                                                                 <i class="fa fa-eye me-1 opacity-50"></i> Xem nhóm
                                                             </button>
                                                         </div>
@@ -141,10 +148,9 @@
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <input type="hidden" id="memberid-input"
-                                                               class="form-control" value="" x-model="invitedCode">
+                                                               class="form-control" >
                                                         <div class="">
                                                             <div class="mb-0 position-relativemt-n4 mx-n4 rounded-top bg-primary p-4">
-
                                                                 <div class="d-flex position-absolute start-0 end-0 top-0 p-3">
                                                                     <div class="flex-grow-1">
                                                                         <h5 class="modal-title text-white">
@@ -166,11 +172,11 @@
                                                         </div>
                                                         <div class="mb-3 mt-3">
                                                             <label for="teammembersName" class="form-label">
-                                                                Mã
-                                                                mời
+                                                                Mã mời
                                                             </label>
                                                             <input type="text" class="form-control"
-                                                                   id="teammembersName" placeholder="Nhập mã nhóm"
+                                                                   placeholder="Nhập mã nhóm"
+                                                                   x-model="invitedCode"
                                                                    required>
 
                                                             <div class="invalid-feedback">
@@ -241,34 +247,42 @@
                                                 </button>
                                             </li>
                                         </ul>
+                                        <!--end nav-tabs-->
+
                                         <div class="block-content tab-content overflow-hidden">
                                             <div class="tab-pane pull-x fade fade-up show active" id="so-settings" role="tabpanel"
                                                  aria-labelledby="so-settings-tab" tabindex="0">
                                                 <div class="list-test px-2">
-                                                    <div class="block block-rounded block-fx-pop mb-2">
-                                                        <div class="block-content block-content-full border-start border-3 border-primary">
-                                                            <div class="d-md-flex justify-content-md-between align-items-md-center">
-                                                                <div class="p-1 p-md-2">
-                                                                    <h3 class="h4 fw-bold mb-3">
-                                                                        <a asp-action="" asp-controller="" class="text-dark link-fx">Kiểm tra giữa kì</a>
-                                                                    </h3>
-                                                                    <p class="fs-sm text-muted mb-0">
-                                                                        <i class="fa fa-clock me-1"></i> Diễn ra từ <span>12:00 08/03/2023</span>
-                                                                        đến
-                                                                        <span>12:00 09/03/2023</span>
-                                                                    </p>
+                                                    <template x-for="item in _listExams">
+                                                        <div class="block block-rounded block-fx-pop mb-2">
+                                                            <div class="block-content block-content-full border-start border-3 border-primary">
+                                                                <div class="d-md-flex justify-content-md-between align-items-md-center">
+                                                                    <div class="p-1 p-md-2">
+                                                                        <h3 class="h4 fw-bold mb-3">
+                                                                            <a asp-action="" asp-controller="" class="text-dark link-fx" x-text="item.title"></a>
+                                                                        </h3>
+                                                                        <p class="fs-sm text-muted mb-0">
+                                                                            <i class="fa fa-clock me-1"></i> Diễn ra từ <span x-text="formatDateTime(item.timeStart)"></span>
+                                                                            đến
+                                                                            <span x-text="formatDateTime(item.timeEnd)">12:00 09/03/2023</span>
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </template>
+
+
                                                 </div>
                                             </div>
+
                                             <div class=" tab-pane pull-x fade fade-up" id="so-profile" role="tabpanel"
                                                  aria-labelledby="so-profile-tab" tabindex="0">
                                                 <ul class="list-announce nav-items my-2">
                                                     <p class="text-center">Không có thông báo</p>
                                                 </ul>
                                             </div>
+
                                             <div class="tab-pane pull-x fade fade-up" id="so-people" role="tabpanel" aria-labelledby="so-people-tab"
                                                  tabindex="0">
                                                 <div class="block mb-0">
@@ -277,7 +291,21 @@
                                                     </div>
                                                     <div class="block-content">
                                                         <ul class="nav-items list-friends">
+                                                            <template x-for="item in _listUsers">
+                                                                <li>
+                                                                    <div class="d-flex py-2 align-items-center">
+                                                                        <div class="flex-shrink-0 mx-3 overlay-container">
+                                                                            <img class="img-avatar img-avatar48" src="~/media/avatar/avatar.jpg" alt="">
+                                                                        </div>
+                                                                        <div class="fw-semibold" x-text="item.fullName"></div>
+                                                                    </div>
+                                                                </li>
+                                                            </template>   
+                                                            <template x-if="_listUsers.length == 0">
+                                                                <p class="text-center">Không có thành viên</p>
+                                                            </template>
                                                         </ul>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,7 +318,6 @@
                     </div><!-- end col -->
                 </div>
             </div>
-            
             <!--end row-->
         </div><!-- container-fluid -->
     </div><!-- End Page-content -->

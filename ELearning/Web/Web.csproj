@@ -7,6 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ViewModels\ExamClientVM\**" />
+	  <Content Remove="ViewModels\ExamClientVM\**" />
+	  <EmbeddedResource Remove="ViewModels\ExamClientVM\**" />
+	  <None Remove="ViewModels\ExamClientVM\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AspNetCore.MailKitMailer" Version="2.0.0" />
 		<PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
 		<PackageReference Include="AutoMapper" Version="13.0.1" />

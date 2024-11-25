@@ -1,67 +1,4 @@
-﻿$(document).ready(() => {
-    $('.select2').select2();
-    // Initialize jqValidation setup for real-time
-    jqValidation();
-
-    $('.form-add-user').validate({
-        rules: {
-            "mssv": {
-                required: true,
-                number: true
-            },
-            "user_email": {
-                required: true,
-                email: !0
-            },
-            "user_name": {
-                required: true,
-            },
-            "user_gender": {
-                required: true,
-            },
-            "datepicker": {
-                required: true,
-            },
-            "user_nhomquyen": {
-                required: true,
-            },
-            "user_password": {
-                required: true,
-                minlength: 4
-            },
-        },
-        messages: {
-            "masv": {
-                required: "Vui lòng nhập mã sinh viên của bạn",
-                number: "Mã sinh viên phải là các ký tự số"
-            },
-            "user_email": {
-                required: "Vui lòng cung cấp email của bạn",
-                email: "Phải nhập đúng định dạng email"
-            },
-            "user_name": {
-                required: "Cung cấp đầy đủ họ tên",
-            },
-            "user_gender": {
-                required: "Tích chọn 1 trong 2",
-            },
-            "datepicker": {
-                required: "Vui lòng cho biết ngày sinh của bạn",
-            },
-            "user_nhomquyen": {
-                required: "Vui lòng chọn nhóm quyền",
-            },
-            "user_password": {
-                required: "Nhập mật khẩu",
-                minlength: "Mật khẩu phải có ít nhất 5 ký tự!"
-            },
-        }
-
-    });
-});
-
-
-document.addEventListener("alpine:init", () => {
+﻿document.addEventListener("alpine:init", () => {
     Alpine.data("users", () => ({
         _list: [],
         _modal: {},
@@ -83,6 +20,29 @@ document.addEventListener("alpine:init", () => {
             password: "",
             blockedTo: "",
             appRoleId: ""
+        },
+        currentPage: 1,
+        itemsPerPage: 10,
+        searchTerm: "",
+
+        get filteredList() {
+            if (!this.searchTerm) {
+                return this._list;
+            }
+            return this._list.filter(item =>
+                item.mssv.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                item.fullName.toLowerCase().includes(this.searchTerm.toLowerCase())
+            );
+        },
+
+        get paginatedList() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredList.slice(start, end);
+        },
+
+        get totalPages() {
+            return Math.ceil(this.filteredList.length / this.itemsPerPage);
         },
 
         init() {
@@ -117,20 +77,6 @@ document.addEventListener("alpine:init", () => {
                 return true;
             }
             return false;
-        },
-
-        get totalPages() {
-            return Math.ceil(this.users.length / this.pageSize);
-        },
-
-        get paginatedList() {
-            const start = (this.currentPage - 1) * this.pageSize;
-            return this.users.slice(start, start + this.pageSize);
-        },
-
-        goToPage(page) {
-            if (page < 1 || page > this.totalPages) return;
-            this.currentPage = page;
         },
 
         OpenModelAdd() {
@@ -223,6 +169,7 @@ document.addEventListener("alpine:init", () => {
                 this.refreshData();
             });
         },
+
         loadRoleComponent(selectedId) {
             // Gọi AJAX để tải lại ViewComponent với giá trị mới của `selectedId`
             fetch(`/path/to/load-component?selectedId=${selectedId}`)
@@ -230,7 +177,22 @@ document.addEventListener("alpine:init", () => {
                 .then(html => {
                     document.querySelector('#roleSelect').innerHTML = html;
                 });
+        },
+
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+
+        goToPage(page) {
+            this.currentPage = page;
         }
     }))
 });
-

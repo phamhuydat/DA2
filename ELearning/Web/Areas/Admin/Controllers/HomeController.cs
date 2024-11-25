@@ -21,6 +21,7 @@ namespace Web.Areas.Admin.Controllers
 
         }
 
+        [AppAuthorize(AuthConst.AppGroup.VIEW_DETAIL)]
         public IActionResult Index()
         {
 

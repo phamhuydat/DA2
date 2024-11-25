@@ -11,6 +11,7 @@ using Web.Areas.Admin.ViewModels.Role;
 using Web.Areas.Admin.ViewModels.SubjectVM;
 using Web.Areas.Admin.ViewModels.user;
 using Web.ViewModels.Account;
+using Web.ViewModels.ClientExamVM;
 using Web.ViewModels.ClientGroupVM;
 
 namespace Web.WebConfig
@@ -71,6 +72,17 @@ namespace Web.WebConfig
               .ReverseMap();
 
 
+            CreateMap<Exam, ListExamUserVM>()
+                .ForMember(vm => vm.ExamName, opts => opts.MapFrom(entity => entity.Title))
+                .ForMember(vm => vm.SubjectName, opts => opts.MapFrom(entity =>
+                    entity.handOutExams.First().group.subject.SubjectName + " - NH"
+                    + entity.handOutExams.First().group.AcademicYear + " - HK"
+                    + entity.handOutExams.First().group.Semester))
+                .ForMember(vm => vm.WorkTime, opts => opts.MapFrom(entity => entity.WorkTime))
+                .ForMember(vm => vm.StartTime, opts => opts.MapFrom(entity => entity.TimeStart))
+                .ForMember(vm => vm.EndTime, opts => opts.MapFrom(entity => entity.TimeEnd))
+                .ForMember(vm => vm.TotalQuestion, opts => opts.MapFrom(entity => entity.EQCount + entity.MQCount + entity.HQCount))
+                .ReverseMap();
 
 
         }
@@ -214,6 +226,31 @@ namespace Web.WebConfig
                 .ForMember(vm => vm.DisplayOrder, opts => opts.MapFrom(entity => entity.DisplayOrder))
                 .ReverseMap();
         });
+
+        public static MapperConfiguration GroupDetailIndexClientConf => new MapperConfiguration(mapper =>
+        {
+            // map dữ liệu từ group xang listclientgroupvm
+            mapper.CreateMap<GroupDetails, ListUserInGroup>()
+                .ForMember(vm => vm.FullName, opts => opts.MapFrom(entity => entity.User.FullName))
+                .ReverseMap();
+        });
+
+        public static MapperConfiguration ExamIndexClientConf => new MapperConfiguration(mapper =>
+        {
+            // map dữ liệu từ group xang listclientgroupvm
+            mapper.CreateMap<Exam, ListExamUserVM>()
+                .ForMember(vm => vm.ExamName, opts => opts.MapFrom(entity => entity.Title))
+                .ForMember(vm => vm.StartTime, opts => opts.MapFrom(entity => entity.TimeStart))
+                .ForMember(vm => vm.EndTime, opts => opts.MapFrom(entity => entity.TimeEnd))
+                .ForMember(vm => vm.SubjectName, opts => opts.MapFrom(entity =>
+                    entity.handOutExams.First().group.subject.SubjectName + " - NH"
+                    + entity.handOutExams.First().group.AcademicYear + " - HK"
+                    + entity.handOutExams.First().group.Semester))
+                .ReverseMap();
+        });
+
+
+
 
 
     }

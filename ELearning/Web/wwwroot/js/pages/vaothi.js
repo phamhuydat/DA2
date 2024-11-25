@@ -54,6 +54,7 @@ $(document).ready(function () {
                 <p class="mb-1"><b>${String.fromCharCode(i + 65)}.</b> ${op.noidungtl
                     }</p></div>`;
             });
+
             data += `</div></div>`;
             data += `<div class="test-ans bg-primary rounded-bottom py-2 px-3 d-flex align-items-center"><p class="mb-0 text-white me-4">Đáp án của bạn:</p>`;
             item.cautraloi.forEach((op, i) => {
@@ -68,9 +69,9 @@ $(document).ready(function () {
                 )}</button>`;
             });
             data += dadung != null && dadung.macautl == item.dapanchon ? `<span class="h2 mb-0 ms-1"><i class="fa fa-check" style="color:#76BB68;"></i></span>`
-                    : `<span class="h2 mb-0 ms-1"><i class="fa fa-xmark" style="color:#FF5A5F;"></i></span><span class="mx-2 text-white">Đáp án đúng: ${String.fromCharCode(
-                        item.cautraloi.indexOf(dadung) + 65
-                    )}</span>`;
+                : `<span class="h2 mb-0 ms-1"><i class="fa fa-xmark" style="color:#FF5A5F;"></i></span><span class="mx-2 text-white">Đáp án đúng: ${String.fromCharCode(
+                    item.cautraloi.indexOf(dadung) + 65
+                )}</span>`;
             data += `</div></div>`;
         });
         $("#content-file").html(data);

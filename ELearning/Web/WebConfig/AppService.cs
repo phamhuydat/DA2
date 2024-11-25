@@ -22,7 +22,6 @@ namespace Web.WebConfig
                 opt.EnableSensitiveDataLogging();
             });
             services.AddScoped<GenericRepository>();
-            //services.AddTransient<OrderDataVM>();
 
             // Cấu hình đăng nhập
 
@@ -43,6 +42,7 @@ namespace Web.WebConfig
             //    options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
             //    options.Cookie.HttpOnly = true;
             //});
+
             services.AddAuthentication(AppConst.COOKIES_AUTH).AddCookie(options =>
             {
                 options.LoginPath = AppConst.LOGIN_PATH;

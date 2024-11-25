@@ -17,7 +17,6 @@ namespace Web.Controllers
     [AllowAnonymous]
     public class AccountController : BaseController
     {
-
         public readonly INotyfService _notyf;
         public AccountController(GenericRepository repository, IMapper mapper, INotyfService noty) : base(repository, mapper)
         {
@@ -85,7 +84,6 @@ namespace Web.Controllers
             };
 
             await HttpContext.SignInAsync(AppConst.COOKIES_AUTH, principal, authenPropeties);
-            _notyf.Success("Đăng nhập thành công");
 
             string roleName = user.RoleName.ToUpper();
 

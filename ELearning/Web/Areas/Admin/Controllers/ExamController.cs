@@ -69,6 +69,15 @@ namespace Web.Areas.Admin.Controllers
             return Ok(mapData);
         }
         // api list chapter
+
+        public IActionResult GetCountQuestion(int subjectId, int ChapterId, int level)
+        {
+            var data = _repo.GetAll<Question>()
+                .Where(c => c.SubjectId == subjectId && c.ChapterId == ChapterId && c.Level == level)
+                .Count();
+            return Ok(data);
+        }
+
         [HttpGet]
         public IActionResult GetChapter(int subjectId)
         {

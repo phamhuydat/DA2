@@ -32,7 +32,7 @@ namespace Web.Components.MainNavBarClient
                 },
                 new MenuItem
                 {
-                    Action = "Exam",
+                    Action = "Index",
                     Controller = "Test",
                     DisplayText = "Bài thi",
                     Icon = "file-alt"

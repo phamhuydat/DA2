@@ -11,7 +11,7 @@ namespace Web.ViewModels.Account
         [DataType(DataType.Password)]
         public string Password { get; set; }
         [DisplayName("Ghi nhớ mật khẩu")]
-        public bool RememberMe { get; set; } = false;
+        public bool RememberMe { get; set; }
 
     }
 }

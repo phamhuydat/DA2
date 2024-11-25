@@ -13,12 +13,12 @@
 function getToTalQuestionOfChapter(chuong, monhoc, dokho) {
     var result = 0;
     $.ajax({
-        url: "./question/getsoluongcauhoi",
+        url: "/Admin/Exam/GetCountQuestion  ",
         type: "post",
         data: {
-            chuong: chuong,
-            monhoc: monhoc,
-            dokho: dokho,
+            subjectId: monhoc,
+            chapterId: chuong,
+            level: dokho,
         },
         async: false,
         success: function (response) {
@@ -55,18 +55,18 @@ $(document).ready(() => {
     );
 
     // bug
-    //$.validator.addMethod(
-    //    "validSoLuong",
-    //    function (value, element, param) {
-    //        const chapter = $("#chapter").val() || "";
-    //        const subjectId = $("#nhom-hp").val()
-    //            ? groups[$("#nhom-hp").val()].mamonhoc
-    //            : 0;
-    //        const totalQuestions = parseInt(getToTalQuestionOfChapter(chapter, subjectId, param), 10);
-    //        return totalQuestions >= parseInt(value, 10);
-    //    },
-    //    "Số lượng câu hỏi không đủ"
-    //);
+    $.validator.addMethod(
+        "validSoLuong",
+        function (value, element, param) {
+            const chapter = $("#chapter").val() || "";
+            const subjectId = $("#nhom-hp").val()
+                ? groups[$("#nhom-hp").val()].mamonhoc
+                : 0;
+            const totalQuestions = parseInt(getToTalQuestionOfChapter(chapter, subjectId, param), 10);
+            return totalQuestions >= parseInt(value, 10);
+        },
+        "Số lượng câu hỏi không đủ"
+    );
 
     $.validator.addMethod(
         "validThoigianthi",
@@ -282,6 +282,7 @@ document.addEventListener("alpine:init", () => {
                 ]);
             });
         },
+
         formatDateTime(dateTimeStr) {
             const [date, time] = dateTimeStr.split(' ');
             const [day, month, year] = date.split('-');

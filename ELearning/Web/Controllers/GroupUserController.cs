@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
+using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Web.Areas.Admin.ViewModels.GroupVM;
@@ -22,7 +23,6 @@ namespace Web.Controllers
             return View();
         }
 
-
         public IActionResult LoadListGroup()
         {
             // get all group of user in groupdetails
@@ -37,15 +37,24 @@ namespace Web.Controllers
             return Ok(listGroup);
         }
 
-        public async Task<IActionResult> JoinGroup(string code)
+        public async Task<IActionResult> JoinGroup([FromBody] string code)
         {
             var group = await _repo.GetOneAsync<Group>(x => x.InvitationCode == code);
+            var check = await _repo.GetOneAsync<GroupDetails>(x => x.GroupId == group.Id && x.UserId == this.CurrentUserId);
             if (group == null)
             {
                 return BadRequest(new
                 {
                     success = false,
                     message = "Mã lớp không tồn tại"
+                });
+            }
+            if (check != null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Bạn đã tham gia lớp này"
                 });
             }
 
@@ -67,7 +76,53 @@ namespace Web.Controllers
             };
 
             await _repo.AddAsync(groupUser);
-            return Ok();
+            return Ok(new
+            {
+                success = true,
+                message = "Tham gia lớp học thành công"
+            });
         }
+
+        public async Task<IActionResult> LeaveGroup(int id)
+        {
+            var groupUser = _repo.GetOneAsync<GroupDetails>(x => x.GroupId == id && x.UserId == this.CurrentUserId);
+
+            if (groupUser == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Bạn không tham gia lớp này"
+                });
+            }
+
+            await _repo.DeleteAsync<GroupDetails>(groupUser.Id);
+            return Ok(new
+            {
+                success = true,
+                message = "Rời khỏi lớp học thành công"
+            });
+        }
+
+        public IActionResult LoadListExam(int id)
+        {
+            var listExam = _repo.GetAll<Exam>(x => x.Id == id)
+                .Include(x => x.Subject)
+                .ProjectTo<ListExamInGroupVM>(AutoMapperProfile.ExamIndexClientConf)
+                .ToList();
+
+            return Ok(listExam);
+        }
+
+        public IActionResult LoadListUser(int id)
+        {
+            var listUser = _repo.GetAll<GroupDetails>(x => x.GroupId == id && x.UserId != this.CurrentUserId)
+                .Include(x => x.User)
+                .ProjectTo<ListUserInGroup>(AutoMapperProfile.GroupDetailIndexClientConf)
+                .ToList();
+
+            return Ok(listUser);
+        }
+
     }
 }

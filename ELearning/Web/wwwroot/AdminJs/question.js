@@ -126,7 +126,7 @@ document.addEventListener("alpine:init", () => {
             this.LoadChapter();
         },
 
-        refreshData() {
+        async refreshData() {
             fetch("/Admin/Question/ListItem")
                 .then(x => x.json())
                 .then(json => {
@@ -312,9 +312,7 @@ document.addEventListener("alpine:init", () => {
             })
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result);
                     this._listContentFile = result;
-                    console.log(this._listContentFile);
                 })
                 .catch(error => {
                     console.log(error);
@@ -339,21 +337,18 @@ document.addEventListener("alpine:init", () => {
             })
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
-                    if (result.success) {
-                        // Handle success
-                        showNotification({
-                            type: 'success',
-                            message: result.message,
-                        });
-                        this.refreshData();
-                    } else {
-                        // Handle error
-                        showNotification({
-                            type: 'danger',
-                            message: result.message,
-                        });
-                    }
+                    console.log(result);
+                    showNotification({
+                        type: result.sucess ? 'danger' : 'success',
+                        message: result.message,
+                    });
+                    this.refreshData();
+
+                    // Clear data
+                    this._importFile.file = null;
+                    this._updinData.subjectId = 0;
+                    this._updinData.chapterId = 0;
+                    this._modal.hide();
                 })
                 .catch(error => {
                     console.log(error);
@@ -361,6 +356,10 @@ document.addEventListener("alpine:init", () => {
                         type: 'danger',
                         message: 'Lỗi rồi server ra mà fix di',
                     });
+
+                    this._importFile.file = null;
+                    this._updinData.subjectId = 0;
+                    this._updinData.chapterId = 0;
                 });
         },
 

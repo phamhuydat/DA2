@@ -9,6 +9,7 @@ namespace Data.Configurations
         public void Configure(EntityTypeBuilder<Result> builder)
         {
             builder.HasKey(x => new { x.Id, x.ExamId, x.UserId });
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Data.Entities;
 
 namespace Data.Repositories
 {
@@ -47,6 +48,21 @@ namespace Data.Repositories
             await _db.AddRangeAsync(entities);
             await _db.SaveChangesAsync();
         }
+        public virtual async Task AddQuestionsAsync(List<Question> questions)
+        {
+            var count = questions.Count;
+
+            // Perform any preprocessing or validation before adding
+            for (int i = 0; i < count; i++)
+            {
+                this.BeforeAdd(questions[i]); // Assuming BeforeAdd processes or validates a single entity
+            }
+
+            // Add questions to the database
+            await _db.Question.AddRangeAsync(questions); // Adjust the DbSet name if needed
+            await _db.SaveChangesAsync();
+        }
+
         #region Bảng Master
         public virtual async Task AddMstAsync<TEntity>(
             TEntity entity,

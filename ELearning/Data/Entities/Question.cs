@@ -14,7 +14,7 @@ namespace Data.Entities
         public int Level { get; set; }
         public bool Status { get; set; }
         public int SubjectId { get; set; }
-        public int ChapterId { get; set; }
+        public int ChapterId {  get; set; }
         //fk
         public Chapter chapter { get; set; }
         public Subject subject { get; set; }

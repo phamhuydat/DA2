@@ -249,7 +249,6 @@ document.addEventListener("alpine:init", () => {
                 .then(json => {
                     this._listChapter = json;
                     this.updateChoices();
-                    console.log(this._listChapter)
                 })
                 .catch(err => {
                     console.log(err);
@@ -257,7 +256,6 @@ document.addEventListener("alpine:init", () => {
         },
 
         LoadListGroup(id) {
-            console.log(id)
             fetch(`/Admin/Exam/GetListGroup?subjectId=${id}`)
                 .then(x => x.json())
                 .then(json => {
@@ -311,11 +309,20 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        formatDateTime(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}:00`;
+        },
         SaveExam() {
             const selectedItems = this.choicesInstance.getValue();
             this._updinData.chapterId = selectedItems.map(item => item.value); // Trả về mảng giá trị
 
-            var data = {
+            const data = {
                 title: this._updinData.title,
                 timeStart: this.formatDateTime(this._updinData.timeStart),
                 timeEnd: this.formatDateTime(this._updinData.timeEnd),
@@ -326,20 +333,18 @@ document.addEventListener("alpine:init", () => {
                 mixAnswer: this._updinData.mixAnswer,
                 seeAnswer: this._updinData.showAnswer,
                 submitWhenExit: this._updinData.submitWhenExit,
-                eqCount: parseInt(this._updinData.eqCount, 10),
-                mqCount: parseInt(this._updinData.mqCount, 10),
-                hqCount: parseInt(this._updinData.hqCount, 10),
+                eQCount: parseInt(this._updinData.eqCount, 10),
+                mQCount: parseInt(this._updinData.mqCount, 10),
+                hQCount: parseInt(this._updinData.hqCount, 10),
                 status: true, // Assuming status is true when saving
                 automaticExams: this._updinData.chapterId.map(chapterId => ({
                     chapterId: chapterId
                 })),
                 handOutExams: this._updinData.groupId.map(groupId => ({
                     groupId: groupId
-                })),
-
-                //details: [] // Assuming details are empty when adding a new exam
+                }))
             };
-
+            console.log(data);
 
             fetch("/Admin/Exam/CreateExam", {
                 method: "POST",
@@ -348,9 +353,8 @@ document.addEventListener("alpine:init", () => {
                 },
                 body: JSON.stringify(data),
             })
-                .then(response => { return response.json() })
+                .then(response => response.json())
                 .then(response => {
-                    console.log(response.data)
                     if (response.success) {
                         showNotification({
                             type: 'success',
@@ -361,8 +365,7 @@ document.addEventListener("alpine:init", () => {
                             fetch("/Admin/Exam/AddManualExam" + data.id);
                         }
                         this.refreshData();
-                    }
-                    else {
+                    } else {
                         showNotification({
                             type: 'danger',
                             message: response.message,
@@ -371,14 +374,12 @@ document.addEventListener("alpine:init", () => {
                 })
                 .catch((error) => {
                     console.error("Error:", error.message);
-                    console.log(error);
                     showNotification({
                         type: 'danger',
                         message: 'Lỗi server',
                     });
                 });
+
         }
-
-
     }))
 })

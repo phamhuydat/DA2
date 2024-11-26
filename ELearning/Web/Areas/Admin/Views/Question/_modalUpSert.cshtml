@@ -212,17 +212,17 @@
 
                         <div id="content-file">
                             <div class="question rounded border mb-3">
-                                <template x-for="question in _listContentFile">
+                                <template x-for="(question, index) in _listContentFile">
                                     <div class="question-top p-3">
                                         <div class="fw-bold mb-3 d-flex">
-                                            <b x-text="question.id"></b>.
+                                            <b x-text="index + 1"></b>.
                                             <span x-text="question.content"></span>
                                         </div>
                                         <div class="row">
-                                            <template x-for="answer in question.options">
+                                            <template x-for="(answer, index) in question.answers">
                                                 <div :class="answer.status ? 'col-6 mb-1 text-primary' : 'col-6 mb-1' ">
                                                     <p class="mb-1" >
-                                                        <b x-text="String.fromCharCode(64 + answer.id)">
+                                                        <b x-text="String.fromCharCode(64 + index + 1)">
                                                         </b>
                                                         <span x-text="answer.answerContent"></span>
                                                     </p>

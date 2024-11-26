@@ -1,14 +1,15 @@
 ﻿using App.Web.Areas.Admin.Controllers;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Data;
 using Data.Entities;
 using Data.Repositories;
-using DocumentFormat.OpenXml.Drawing;
+//using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Share.Consts;
-using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using Web.Areas.Admin.ViewModels.AnswerVM;
 using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
@@ -21,8 +22,11 @@ namespace Web.Areas.Admin.Controllers
 {
     public class QuestionController : AdminBaseController
     {
-        public QuestionController(GenericRepository repo, IMapper mapper) : base(repo, mapper)
-        { }
+        public readonly DataContext _db;
+        public QuestionController(DataContext db, GenericRepository repo, IMapper mapper) : base(repo, mapper)
+        {
+            _db = db;
+        }
 
         [AppAuthorize(AuthConst.AppQuestion.VIEW_DETAIL)]
         public IActionResult Index() => View();
@@ -181,7 +185,6 @@ namespace Web.Areas.Admin.Controllers
                 await _repo.DeleteAsync(answerToRemove);
             }
 
-
             questionOld.UpdatedBy = this.CurrentUserId;
             questionOld.UpdatedDate = DateTime.Now;
 
@@ -223,25 +226,48 @@ namespace Web.Areas.Admin.Controllers
         {
             if (fileWord == null || fileWord.Length == 0)
             {
-                return BadRequest(new { message = "No file uploaded!", success = false });
+                return Ok(new { message = "No file uploaded!", success = false });
             }
             try
             {
-                // Xử lý file Word và trả dữ liệu
-                var questions = ProcessFile(fileWord, subjectId, chapterId);
+                // Process the Word file and return the data
+                var questions = await ProcessFileAsync(fileWord, subjectId, chapterId);
 
-                var listData = new List<Question>();
-                foreach (var item in questions)
+                if (questions == null || !questions.Any())
                 {
-                    var data = _mapper.Map<Question>(item);
-                    data.CreatedBy = this.CurrentUserId;
-                    data.CreatedDate = DateTime.Now;
-                    listData.Add(data);
+                    return Ok(new { message = "No questions found in the file!", success = false });
                 }
 
-                await _repo.AddAsync(listData);
+                var listQuestion = new List<Question>();
+                foreach (var item in questions)
+                {
+                    var question = _mapper.Map<Question>(item);
+                    if (item.answers == null || !item.answers.Any())
+                    {
+                        continue; // Skip questions without answers
+                    }
 
-                return Ok(new { message = "File imported successfully!", data = questions, success = true });
+                    question.answers = item.answers.Select((option, index) => new Answer
+                    {
+                        AnswerContent = option.AnswerContent,
+                        Status = option.Status,
+                        QuestionId = question.Id,
+                        CreatedBy = this.CurrentUserId,
+                        CreatedDate = DateTime.Now,
+                    }).ToList();
+
+                    question.CreatedBy = this.CurrentUserId;
+                    question.CreatedDate = DateTime.Now;
+                    listQuestion.Add(question);
+                }
+
+                if (!listQuestion.Any())
+                {
+                    return Ok(new { message = "No valid questions to add!", success = false });
+                }
+
+                await _repo.AddAsync(listQuestion);
+                return Ok(new { message = "Thêm dữ liệu thành công!", success = true });
             }
             catch (Exception ex)
             {
@@ -250,17 +276,20 @@ namespace Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public List<QuestionAddOrEditVM> ProcessFile(IFormFile file, int subjectId, int chapterId)
+        public async Task<List<Question>> ProcessFileAsync(IFormFile file, int subjectId, int chapterId)
         {
-            var questions = new List<QuestionAddOrEditVM>();
+            var questions = new List<Question>();
 
             // Save the file temporarily
-            var tempPath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
-            using (var stream = new FileStream(tempPath, FileMode.Create))
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + Path.GetExtension(file.FileName));
+
+            // Ensure the file is completely written before accessing it
+            using (var stream = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
             {
-                file.CopyToAsync(stream);
+                await file.CopyToAsync(stream);
             }
 
+            // Now process the file
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(tempPath, false))
             {
                 var body = wordDoc.MainDocumentPart?.Document?.Body;
@@ -277,32 +306,31 @@ namespace Web.Areas.Admin.Controllers
 
                 // Combine paragraphs into a single string
                 var questionText = string.Join("\n", paragraphs);
+
                 // Split the text into question blocks based on the pattern
-
                 var questionBlocks = questionText.Split(new[] { "\n[" }, StringSplitOptions.RemoveEmptyEntries)
-                                          .Select(q => q.Trim())
-                                          .Select(q => q.StartsWith("[") ? q : "[" + q) // Ensure proper format
-                                          .ToList();
+                                                 .Select(q => q.Trim())
+                                                 .Select(q => q.StartsWith("[") ? q : "[" + q) // Ensure proper format
+                                                 .ToList();
 
-                int RowIndex = 0;
-                // Process each question block                                                                                                                    
+
+                // Process each question block
                 foreach (var block in questionBlocks)
                 {
-                    RowIndex++;
                     var lines = block.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length < 2) continue;
 
-
-                    var ANSWER = System.Text.RegularExpressions.Regex.Replace(lines[lines.Length - 1], @"^\[\d+\]\s*", "").Trim();
-
+                    var ANSWER = Regex.Replace(lines[lines.Length - 1], @"^\[\d+\]\s*", "").Trim();
                     var isCol = ANSWER.Last();
+
                     // Create a new question
-                    var question = new QuestionAddOrEditVM
+                    var question = new Question
                     {
-                        Id = RowIndex,
-                        Content = System.Text.RegularExpressions.Regex.Replace(lines[0], @"^\[\d+\]\s*", "").Trim(),
-                        Level = int.Parse(System.Text.RegularExpressions.Regex.Match(lines[0], @"\d+").Value),
-                        Options = new List<AnswerAddOrEdit>()
+                        Content = Regex.Replace(lines[0], @"^\[\d+\]\s*", "").Trim(),
+                        Level = int.Parse(Regex.Match(lines[0], @"\d+").Value),
+                        answers = new List<Answer>(),
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = this.CurrentUserId,
                     };
 
                     // Add options
@@ -311,11 +339,12 @@ namespace Web.Areas.Admin.Controllers
                         var optionText = lines[i].Trim();
                         if (optionText.StartsWith("A. ") || optionText.StartsWith("B. ") || optionText.StartsWith("C. ") || optionText.StartsWith("D. "))
                         {
-                            question.Options.Add(new AnswerAddOrEdit
+                            question.answers.Add(new Answer
                             {
-                                Id = i,
                                 Status = optionText.First() == isCol,
                                 AnswerContent = optionText.Length > 3 ? optionText.Substring(3).Trim() : optionText.Trim(),
+                                CreatedDate = DateTime.Now,
+                                CreatedBy = this.CurrentUserId,
                             });
                         }
                     }
@@ -327,11 +356,22 @@ namespace Web.Areas.Admin.Controllers
                 }
             }
 
-            // Delete the temporary file if needed
-            System.IO.File.Delete(tempPath);
+            // Ensure temporary file is deleted even if an exception occurs
+            try
+            {
+                if (System.IO.File.Exists(tempPath))
+                {
+                    System.IO.File.Delete(tempPath);
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Failed to delete temp file: {ex.Message}");
+            }
 
             return questions;
         }
+
 
     }
 }

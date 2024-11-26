@@ -13,6 +13,7 @@ using Web.Areas.Admin.ViewModels.user;
 using Web.ViewModels.Account;
 using Web.ViewModels.ClientExamVM;
 using Web.ViewModels.ClientGroupVM;
+using Web.ViewModels.QuestionExamVM;
 
 namespace Web.WebConfig
 {
@@ -33,10 +34,8 @@ namespace Web.WebConfig
             //map dl từ subjectUpsertVM xang subject
             CreateMap<SubjectAddOrUpdateVM, Subject>().ReverseMap();
 
-
             //map dl từ chapterUpsertVM xang chapter
             CreateMap<ChapterAddOrEditVM, Chapter>().ReverseMap();
-
 
             // Map dữ liệu từ AnswerAddOrEdit sang Answer
             CreateMap<AnswerAddOrEdit, Answer>().ReverseMap();
@@ -64,12 +63,6 @@ namespace Web.WebConfig
             CreateMap<HandOutExamVM, HandOutExam>().ReverseMap();
             CreateMap<HandOutExam, HandOutExamVM>().ReverseMap();
 
-            //map dữ liệu từ ExamDetailsVM sang ExamDetails
-            CreateMap<ExamDetailsVM, ExamDetails>()
-              .ForMember(dest => dest.QuestionId, opt => opt.MapFrom(src => src.QuestionId))
-              .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.ExamId))
-              .ForMember(dest => dest.DisplayOrder, opt => opt.MapFrom(src => src.DisplayOrder))
-              .ReverseMap();
 
 
             CreateMap<Exam, ListExamUserVM>()
@@ -84,6 +77,8 @@ namespace Web.WebConfig
                 .ForMember(vm => vm.TotalQuestion, opts => opts.MapFrom(entity => entity.EQCount + entity.MQCount + entity.HQCount))
                 .ReverseMap();
 
+
+            CreateMap<Question, Question>().ReverseMap();
 
         }
 
@@ -200,7 +195,6 @@ namespace Web.WebConfig
 
 
         // cấu hình mapper cho GroupDetailController, action ListUserGroup
-
         public static MapperConfiguration GroupDetailIndexConf => new MapperConfiguration(mapper =>
         {
             mapper.CreateMap<GroupDetails, ListUserGroupVM>()
@@ -249,7 +243,15 @@ namespace Web.WebConfig
                 .ReverseMap();
         });
 
-
+        // cấu hình mapper cho TestController, TakeExam với ResQuestionVM
+        public static MapperConfiguration ExamDetailsConf => new MapperConfiguration(mapper =>
+        {
+            // map dữ liệu từ group xang listclientgroupvm
+            mapper.CreateMap<ExamDetails, ResQuestionVM>()
+                .ForMember(vm => vm.Content, opts => opts.MapFrom(entity => entity.Question.Content))
+                .ForMember(vm => vm.answers, opts => opts.MapFrom(entity => entity.Question.answers))
+                .ReverseMap();
+        });
 
 
 

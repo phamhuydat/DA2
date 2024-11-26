@@ -11,7 +11,7 @@
 }
 
 @section Scripts {
-    <script src="~/js/pages/vaothi.js"></script>
+    <script src="~/clientjs/startExam.js" asp-append-version="true"></script>
 }
 
 <div class="main-content">
@@ -97,7 +97,11 @@
                     }
                     else if (Model.IsStatus == 1)
                     {
-                        <button name='start-test' id='start-test' class='btn btn-hero btn-info w-100' role='button'>Bắt đầu thi <i class='fa fa-angle-right'></i></button>
+                       <a class='btn btn-hero btn-info w-100' role='button' 
+                            asp-action="TakeExam" asp-route-id="@Model.Id">
+                           Bắt đầu làm bài
+                           <i class='fa fa-angle-right'></i>
+                       </a>
                     }
                     else if (Model.IsStatus == 2)
                     {

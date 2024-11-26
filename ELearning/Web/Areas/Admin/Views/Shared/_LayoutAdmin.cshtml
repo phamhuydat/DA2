@@ -101,15 +101,16 @@
 			altFormat: "d-m-Y",       // Định dạng hiển thị cho người dùng
 			dateFormat: "Y-m-d"        // Định dạng gửi lên server để ASP.NET nhận diện
 		});
+
 		flatpickr("#time-start", {
 			enableTime: true,
-			dateFormat: "d-m-Y",
+			dateFormat: "Y-m-d\\TH:i:S",
 			time_24hr: true
 		});
 
 		flatpickr("#time-end", {
 			enableTime: true,
-			dateFormat: "d-m-Y",
+			dateFormat: "Y-m-d\\TH:i:S",
 			time_24hr: true
 		});
 	</script>

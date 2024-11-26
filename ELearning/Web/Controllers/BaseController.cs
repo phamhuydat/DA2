@@ -18,6 +18,7 @@ namespace Web.Controllers
         protected readonly GenericRepository _repo;
         //private readonly ILog _logger;
         protected int CurrentUserId { get => Convert.ToInt32(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)); }
+        protected string CurrentUserName { get => HttpContext.User.FindFirstValue(ClaimTypes.Name); }
         protected readonly string ADMIN = "admin";
         protected readonly string TEACHER = "teacher";
         protected readonly string STUDENT = "student";

@@ -65,7 +65,7 @@ function showNotification(options = {}) {
                         offset: 20,
                         spacing: 10,
                         z_index: 1033,
-                        delay: 5000,
+                        delay: 2000,
                         timer: 1000,
                         animate: {
                             enter: "animated fadeIn",
@@ -109,8 +109,8 @@ function showNotification(options = {}) {
             offset: options.offset || 20,
             spacing: options.spacing || 10,
             z_index: options.z_index || 1033,
-            delay: options.delay || 5000,
-            timer: options.timer || 5000,
+            delay: options.delay || 2000,
+            timer: options.timer || 2000,
             animate: {
                 enter: options.animate_enter || "animated fadeIn",
                 exit: options.animate_exit || "animated fadeOutDown",

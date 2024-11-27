@@ -11,6 +11,7 @@ namespace Web.ViewModels.QuestionExamVM
         }
 
         public string Content { get; set; }
+        public int AnswerId { get; set; }
         public List<Answer> answers { get; set; }
     }
 }

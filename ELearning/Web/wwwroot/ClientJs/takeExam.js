@@ -1,47 +1,52 @@
 ﻿document.addEventListener('alpine:init', () => {
     Alpine.data("takeTest", () => ({
-        _listQuestion: [],
-        userAnswers: {},
-        resultId: null,
-        infoExam: [],
-        examId: 0,
+        _listQuestion: [], // Danh sách câu hỏi
+        userAnswers: [],   // Đáp án của người dùng
+        infoExam: {},      // Thông tin bài thi
+        examId: 0,         // ID của bài thi
+        countdownInterval: null, // Để quản lý bộ đếm ngược
+        unansweredQuestions: [], // Danh sách câu hỏi chưa trả lời
 
-        // lấy id của bài thi
+        // Lấy ID bài thi từ URL
         getIdFromUrl() {
             const pathSegments = window.location.pathname.split('/');
             return pathSegments[pathSegments.length - 1];
         },
+
+        // Định dạng thời gian thành HH:MM:SS
         formatTime(seconds) {
             const hrs = Math.floor(seconds / 3600);
             const mins = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
-
             return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         },
 
+        // Khởi tạo component
         init() {
             this.examId = this.getIdFromUrl();
             this.fetchQuestions();
-
         },
 
+        // Thiết lập đếm ngược
+        startCountdown(workTimeInSeconds) {
+            this.infoExam.workTime = this.formatTime(workTimeInSeconds); // Thời gian ban đầu
 
+            this.countdownInterval = setInterval(() => {
+                workTimeInSeconds--;
+
+                // Khi hết thời gian, dừng đếm ngược và tự động nộp bài
+                if (workTimeInSeconds <= 0) {
+                    clearInterval(this.countdownInterval);
+                    this.infoExam.workTime = "00:00:00";
+                    this.submitAnswers(); // Nộp bài tự động
+                } else {
+                    this.infoExam.workTime = this.formatTime(workTimeInSeconds);
+                }
+            }, 1000); // Cập nhật mỗi giây
+        },
+
+        // Lấy câu hỏi từ server
         async fetchQuestions() {
-            console.log(this.examId);
-            console.log("/Test/TakeExamServer/" + this.examId)
-            //fetch(`/Test/TakeExamServer/${this.examId}`)
-            //    .then(response => response.json())
-            //    .then(data => {
-            //        this._listQuestion = data.questions;
-            //        this.infoExam = data.examVM;
-            //        this.infoExam.workTime = this.formatTime(this.infoExam.workTime);
-            //        console.log(this._listQuestion, this.infoExam);
-            //    })
-            //    .catch(error => {
-            //        console.error(error);
-            //        alert('An error occurred. Please try again.');
-            //    });
-
             try {
                 const response = await fetch(`/Test/TakeExamServer/${this.examId}`);
                 if (!response.ok) {
@@ -51,44 +56,101 @@
                 const data = await response.json();
                 this._listQuestion = data.questions;
                 this.infoExam = data.examVM;
-                this.infoExam.workTime = this.formatTime(this.infoExam.workTime);
-                console.log(this._listQuestion, this.infoExam);
-            } catch (error) {
-                console.error('Fetch error:', error);
-                alert('An error occurred. Please try again.');
-            }
 
-        },
-
-
-
-        async submitAnswers() {
-            const payload = {
-                resultId: this.resultId,
-                userAnswers: Object.entries(this.userAnswers).map(([questionId, selectedOptionId]) => ({
-                    questionId: parseInt(questionId),
-                    selectedOptionId: parseInt(selectedOptionId),
-                }))
-            };
-
-            try {
-                const response = await fetch('/Test/SubmitTest', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
+                // Khởi tạo danh sách đáp án
+                this._listQuestion.forEach(question => {
+                    this.userAnswers[question.id] = {
+                        userId: this.infoExam.id,
+                        questionId: question.id,
+                        answerId: question.answerId // Nếu chưa chọn thì null
+                    };
                 });
 
-                if (response.ok) {
-                    const resultHtml = await response.text();
-                    document.body.innerHTML = resultHtml; // Replace current page content with results
-                } else {
-                    alert('An error occurred while submitting the test.');
-                }
+                // Bắt đầu đếm ngược
+                const workTimeInSeconds = this.infoExam.workTime;
+                this.startCountdown(workTimeInSeconds);
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                console.error('Fetch error:', error);
+                showNotification({
+                    type: 'error',
+                    message: 'Không thể tải bài thi. Vui lòng thử lại!',
+                });
             }
         },
 
+        // Lưu đáp án tạm thời khi người dùng chọn
+        saveAnswer(questionId, id) {
+            if (!this.userAnswers[questionId]) {
+                this.userAnswers[questionId] = {};
+            }
+            this.userAnswers[questionId].answerId = id;
+
+            console.log(this.userAnswers[questionId].answerId);
+        },
+
+        checkUnansweredQuestions() {
+            this.unansweredQuestions = [];
+            for (const questionId in this.userAnswers) {
+                if (this.userAnswers[questionId].answerId === 0) {
+                    this.unansweredQuestions.push(parseInt(questionId));
+                }
+            }
+        },
+        // Nộp bài thi
+        async submitAnswers() {
+            this.checkUnansweredQuestions();
+            if (this.unansweredQuestions.length > 0) {
+                showNotification({
+                    type: 'warning',
+                    message: 'Bạn vẫn còn câu hỏi chưa trả lời. Vui lòng trả lời tất cả các câu hỏi trước khi nộp bài.',
+                });
+                return;
+            }
+
+            clearInterval(this.countdownInterval); // Dừng đếm ngược
+
+            const data = Object.values(this.userAnswers).map(result => ({
+                examId: this.examId,
+                userId: parseInt(result.userId),
+                questionId: parseInt(result.questionId),
+                answerId: parseInt(result.answerId),
+            }));
+
+            console.log(data);
+            try {
+
+                fetch('/Test/SubmitAnswers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification({
+                                type: 'success',
+                                message: data.message,
+                            });
+                            console.log(data);
+                        } else {
+                            throw new Error(`Server error: ${data.message}`);
+                        }
+                    })
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification({
+                    type: 'danger',
+                    message: 'Lỗi server kìa đồ ngu a hi hi!!',
+                });
+            }
+
+        },
+
+        scrollToQuestion(index) {
+            const questionElement = document.querySelector(`#question-${index}`);
+            if (questionElement) {
+                questionElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     }));
 });

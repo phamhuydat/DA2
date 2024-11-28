@@ -1,10 +1,8 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data;
 using Data.Entities;
 using Data.Repositories;
-//using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;

@@ -2,7 +2,7 @@
 using Shared.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace App.Web.ViewModels.Account
+namespace Web.ViewModels.Account
 {
     public class ChangePwdVM
     {

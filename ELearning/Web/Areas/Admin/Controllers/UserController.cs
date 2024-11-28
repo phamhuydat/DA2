@@ -1,11 +1,9 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AspNetCoreHero.ToastNotification.Abstractions;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Share.Consts;
 using Web.Areas.Admin.ViewModels.user;
 using Web.Common;

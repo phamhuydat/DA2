@@ -1,13 +1,8 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Core.Types;
 using Share.Consts;
-using System.Drawing;
-using Web.Areas.Admin.ViewModels.user;
 using Web.Common;
 using Web.WebConfig;
 
@@ -24,14 +19,14 @@ namespace Web.Areas.Admin.Controllers
 		[AppAuthorize(AuthConst.AppGroup.VIEW_DETAIL)]
 		public IActionResult Index()
 		{
-			var roleId = Convert.ToInt32(User.Claims.SingleOrDefault(c => c.Type.Contains(AppClaimTypes.RoleId))?.Value);
-			if (roleId == AppConst.ROLE_CUSTOMER_ID)
-			{
-				return Redirect("/");
-			}
+			//var roleId = Convert.ToInt32(User.Claims.SingleOrDefault(c => c.Type.Contains(AppClaimTypes.RoleId))?.Value);
+			//if (roleId == AppConst.ROLE_CUSTOMER_ID)
+			//{
+			//	return Redirect("/");
+			//}
 			ViewBag.CountSubject = _repo.GetAll<Subject>().Count();
 			ViewBag.CountQuestionActive = _repo.GetAll<Question>(s => s.DeletedDate == null).Count();
-			ViewBag.CountUserUnBlock = _repo.GetAll<Users>(s => s.BlockedTo == null || s.BlockedTo < DateTime.Now).Count();
+			ViewBag.CountUserUnBlock = _repo.GetAll<Users>().Count();
 			ViewBag.CountGroup = _repo.GetAll<Group>().Count();
 			return View();
 		}

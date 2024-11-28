@@ -11,7 +11,7 @@ using Web.Common;
 using Web.WebConfig;
 using X.PagedList;
 
-namespace App.Web.Areas.Admin.Controllers
+namespace Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(AuthenticationSchemes = AppConst.COOKIES_AUTH)]

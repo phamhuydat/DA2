@@ -95,7 +95,7 @@
                                     <a href="javascript:void(0)"
                                        class="answer-item-link btn w-100 btn-sm"
                                        :class="{
-                                           'active': userAnswers[item.id]?.answerId != 0,
+                                           'active': userAnswers[item.id]?.answerId != null,
                                            'btn-outline-primary': !unansweredQuestions.includes(item.id),
                                            'btn-outline-danger': unansweredQuestions.includes(item.id)
                                         }"

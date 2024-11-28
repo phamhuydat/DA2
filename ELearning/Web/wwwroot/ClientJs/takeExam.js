@@ -60,11 +60,15 @@
                 // Khởi tạo danh sách đáp án
                 this._listQuestion.forEach(question => {
                     this.userAnswers[question.id] = {
-                        userId: this.infoExam.id,
+                        resultId: this.infoExam.resultId,
                         questionId: question.id,
-                        answerId: question.answerId // Nếu chưa chọn thì null
+                        answerId: question.answerId == 0 ? null : question.answerId   // Nếu chưa chọn thì null
                     };
                 });
+
+                console.log(this.infoExam);
+                console.log(this.userAnswers);
+                console.log(this._listQuestion);
 
                 // Bắt đầu đếm ngược
                 const workTimeInSeconds = this.infoExam.workTime;
@@ -84,14 +88,12 @@
                 this.userAnswers[questionId] = {};
             }
             this.userAnswers[questionId].answerId = id;
-
-            console.log(this.userAnswers[questionId].answerId);
         },
 
         checkUnansweredQuestions() {
             this.unansweredQuestions = [];
             for (const questionId in this.userAnswers) {
-                if (this.userAnswers[questionId].answerId === 0) {
+                if (this.userAnswers[questionId].answerId === null) {
                     this.unansweredQuestions.push(parseInt(questionId));
                 }
             }
@@ -110,15 +112,12 @@
             clearInterval(this.countdownInterval); // Dừng đếm ngược
 
             const data = Object.values(this.userAnswers).map(result => ({
-                examId: this.examId,
-                userId: parseInt(result.userId),
+                resultId: parseInt(result.resultId),
                 questionId: parseInt(result.questionId),
                 answerId: parseInt(result.answerId),
             }));
 
-            console.log(data);
             try {
-
                 fetch('/Test/SubmitAnswers', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -130,7 +129,6 @@
                             type: 'success',
                             message: data.message,
                         });
-                        fetch(`/Test/StartTest/${this.examId}`)
                         window.location.href = `/Test/StartTest/${this.examId}`;
                     })
             } catch (error) {

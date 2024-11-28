@@ -1,4 +1,4 @@
-﻿using App.Web.Areas.Admin.Controllers;
+﻿using Web.Areas.Admin.Controllers;
 using AutoMapper;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;

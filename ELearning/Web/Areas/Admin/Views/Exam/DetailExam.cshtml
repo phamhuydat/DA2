@@ -8,7 +8,16 @@
     @* <script src="~/assets/js/pages/dashboard-ecommerce.init.js"></script> *@
     <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>
     <script src="~/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+    <script src="~/AdminJs/detailExam.js" asp-append-version="true"></script>
+
 }
+
+<div x-data="detailExam">
+
+
+
+</div>
 
 
 <div class="row">
@@ -124,10 +133,36 @@
                                     </tr>
                                 </thead>
                                 <tbody id="took_the_exam">
-
+                                    
                                     <tr>
-
-
+                                        <td class="text-center">q</td>
+                                        <td class="fs-sm d-flex align-items-center">
+                                            <div class="d-flex flex-column">
+                                                <strong class="text-primary">${Element["hoten"]}</strong>
+                                                <span class="fw-normal fs-sm text-muted">
+                                                    ${
+                                                    Element["email"]
+                                                    }
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">${Element["diemthi"] || "(Chưa nộp bài)"}</td>
+                                        <td class="text-center">
+                                            ${
+                                            Element["thoigianvaothi"] || "(Vắng thi)"
+                                            }
+                                        </td>
+                                        <td class="text-center">${formattedTime}</td>
+                                        <td class="text-center">0</td>
+                                        <td class="text-center">
+                                            <a class="btn btn-sm btn-soft-secondary show-exam-detail" href="javascript:void(0)" 
+                                            data-bs-toggle="tooltip" aria-label="Xem chi tiết" data-bs-original-title="Xem chi tiết">
+                                                <i class="las la-eye"></i>
+                                            </a>
+                                            <a class="btn btn-sm btn-soft-secondary print-pdf" href="javascript:void(0)" >
+                                                <i class="las la-print"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

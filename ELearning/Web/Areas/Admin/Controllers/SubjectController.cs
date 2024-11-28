@@ -1,9 +1,7 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Share.Consts;

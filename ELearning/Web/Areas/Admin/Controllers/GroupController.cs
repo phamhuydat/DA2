@@ -1,11 +1,9 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Core.Types;
 using Share.Consts;
 using Web.Areas.Admin.ViewModels.GroupDetailVM;
 using Web.Areas.Admin.ViewModels.GroupVM;

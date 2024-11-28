@@ -5,7 +5,6 @@ using System.Security.Claims;
 using Web.Areas.Admin.ViewModels;
 using Web.WebConfig;
 using X.PagedList;
-//using App.Web.Areas.Admin.ViewModels;
 
 namespace Web.Common
 {

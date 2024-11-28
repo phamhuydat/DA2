@@ -3,7 +3,7 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Web.Areas.Components.ListRole
+namespace Web.Areas.Components.ListRole
 {
     public class ListRoleViewComponent : ViewComponent
     {

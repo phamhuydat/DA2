@@ -1,12 +1,9 @@
-﻿using App.Web.Areas.Admin.Controllers;
-using AutoMapper;
+﻿using AutoMapper;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto.Digests;
-using Share.Extensions;
 using System.Security.Claims;
 using Web.Areas.Admin.ViewModels.Account;
 using Web.ViewModels.Account;

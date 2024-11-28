@@ -11,7 +11,7 @@
         },
         _updinData: {
             id: 0,
-            mssv: "",
+            mSSV: "",
             fullName: "",
             gender: "",
             birthday: "",
@@ -113,7 +113,6 @@
                 .then(res => res.json())
                 .then(json => {
                     this._updinData = json;
-                    console.log(this._updinData);
                 });
         },
 

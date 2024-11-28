@@ -31,7 +31,6 @@ namespace Web.Areas.Admin.ViewModels.user
         [AppRequired]
         public DateTime Birthday { get; set; }
 
-
         [AppRequired]
         [AppEmail]
         public string Email { get; set; }

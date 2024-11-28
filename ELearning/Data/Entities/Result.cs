@@ -10,6 +10,7 @@ namespace Data.Entities
         }
         public double TestScores { get; set; }
         public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public int TotalWorkTime { get; set; }
         public int NumCorrect { get; set; } // NumOfCorrect
         public int NumTSC { get; set; }    // Num Of Tab Switches

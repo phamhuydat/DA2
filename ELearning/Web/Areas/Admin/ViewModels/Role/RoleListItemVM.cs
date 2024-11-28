@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Web.Areas.Admin.ViewModels.Role
 {
-    public class RoleListItemVM
-    {
-        public string Name { get; set; }
-        public string Desc { get; set; }
-        public DateTime? CreatedDate { get; set; }
-    }
+	public class RoleListItemVM : ListItemBaseVM
+	{
+		public string Name { get; set; }
+		public string Desc { get; set; }
+		public DateTime? CreatedDate { get; set; }
+	}
 }

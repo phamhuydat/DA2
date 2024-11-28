@@ -126,15 +126,12 @@
                 })
                     .then(res => res.json())
                     .then(data => {
-                        if (data.success) {
-                            showNotification({
-                                type: 'success',
-                                message: data.message,
-                            });
-                            console.log(data);
-                        } else {
-                            throw new Error(`Server error: ${data.message}`);
-                        }
+                        showNotification({
+                            type: 'success',
+                            message: data.message,
+                        });
+                        fetch(`/Test/StartTest/${this.examId}`)
+                        window.location.href = `/Test/StartTest/${this.examId}`;
                     })
             } catch (error) {
                 console.error('Error:', error);
@@ -143,7 +140,6 @@
                     message: 'Lỗi server kìa đồ ngu a hi hi!!',
                 });
             }
-
         },
 
         scrollToQuestion(index) {

@@ -4,12 +4,11 @@ using Data;
 using Data.Entities;
 using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web.ViewModels.ClientExamVM;
 using Web.ViewModels.QuestionExamVM;
-using Web.WebConfig;
-using Microsoft.EntityFrameworkCore;
-using DocumentFormat.OpenXml.Drawing;
 using Web.ViewModels.ResultVM;
+using Web.WebConfig;
 
 namespace Web.Controllers
 {
@@ -34,7 +33,12 @@ namespace Web.Controllers
             var exam = await _repo.GetOneAsync<Exam>(x => x.Id == id);
             var subject = await _repo.GetOneAsync<Subject>(x => x.Id == exam.SubjectId);
 
-            if (exam == null)
+            var result = await _repo.GetOneAsync<Result>(x => x.ExamId == id && x.UserId == this.CurrentUserId);
+
+            //var result = await _repo.GetAll<Result>(x => x.UserId == this.CurrentUserId).ToListAsync()
+
+            if (exam == null || result == null)
+
             {
                 return NotFound();
             }
@@ -47,13 +51,31 @@ namespace Web.Controllers
                 ExamName = exam.Title,
                 WorkTime = exam.WorkTime,
                 SubjectName = subject.SubjectCode + " - " + subject.SubjectName,
+                TotalScore = result?.TestScores ?? 0,
+                SeeAnswer = exam.SeeAnswer,
             };
+
+            if (result != null)
+            {
+                data.UserStartTime = result.StartTime;
+                data.UserEndTime = result.EndTime;
+                data.TotalWorkTime = result.TotalWorkTime;
+                data.TotalCorrectAnswer = result.NumCorrect;
+            }
+            else
+            {
+                data.UserStartTime = null;
+                data.UserEndTime = null;
+                data.TotalWorkTime = 0;
+                data.TotalCorrectAnswer = 0;
+            }
+
 
             return View(data);
         }
 
         // lấy toàn bộ các bài thi của người dùng ở trong các nhóm học phần đang hoạt động
-        public IActionResult LoadListExam()
+        public async Task<IActionResult> LoadListExam()
         {
             // lây các bài thi của người dùng ở trong các nhóm học phần đang hoạt động và được phát bài thi ở handoutexam
             var listExam = _repo.GetAll<Exam>(
@@ -62,6 +84,28 @@ namespace Web.Controllers
                 he.group.GroupDetails.Any(y => y.UserId == this.CurrentUserId)))
                 .ProjectTo<ListExamUserVM>(AutoMapperProfile.ExamIndexClientConf)
                 .ToList();
+
+            var result = await _repo.GetAll<Result>(x => x.UserId == this.CurrentUserId).ToListAsync();
+
+            foreach (var item in listExam)
+            {
+                var temp = result.FirstOrDefault(x => x.ExamId == item.Id);
+                if (temp != null)
+                {
+                    item.TotalScore = temp.TestScores;
+                    item.UserStartTime = temp.StartTime;
+                    item.TotalWorkTime = temp.TotalWorkTime;
+                    item.UserEndTime = temp.EndTime;
+                }
+                else
+                {
+                    item.TotalScore = 0;
+                    item.UserStartTime = null;
+                    item.UserEndTime = null;
+                    item.TotalWorkTime = 0;
+                }
+            }
+
             return Ok(listExam);
         }
 
@@ -99,10 +143,9 @@ namespace Web.Controllers
             {
                 TimeSpan temp = DateTime.Now - check.StartTime;
                 tempcheck = (int)temp.TotalSeconds > data.WorkTime * 60;
-
             }
             // check bài thi có tồn tại không
-            if (data == null || data.TimeStart > DateTime.Now || data.TimeEnd < DateTime.Now || tempcheck)
+            if (data == null || data.TimeStart > DateTime.Now || data.TimeEnd < DateTime.Now || tempcheck || check.EndTime != null)
             {
                 return NotFound();
             }
@@ -110,9 +153,6 @@ namespace Web.Controllers
             {
                 return View();
             }
-
-            //return View();
-
         }
 
         //view bài thi
@@ -125,6 +165,7 @@ namespace Web.Controllers
             {
                 return NotFound();
             }
+
 
             List<ResQuestionVM> questions = new List<ResQuestionVM>();
             var check = await _repo.GetOneAsync<Result>(x => x.ExamId == id && x.UserId == this.CurrentUserId);
@@ -187,6 +228,8 @@ namespace Web.Controllers
             }
             else
             {
+                check.NumTSC += 1;
+
                 questions = _db.ResultDetails
                    .Where(x => x.Result.ExamId == id && x.Result.UserId == this.CurrentUserId)
                    .Select(x => new ResQuestionVM
@@ -200,6 +243,9 @@ namespace Web.Controllers
                            AnswerContent = a.AnswerContent,
                        }).ToList()
                    }).ToList();
+
+                await _repo.UpdateAsync(check);
+
             }
 
             // Check if a result already exists
@@ -259,7 +305,7 @@ namespace Web.Controllers
                     catch (Exception ex)
                     {
                         Console.Error.WriteLine($"Error updating result: {ex.Message}");
-                        return StatusCode(500, "An error occurred while updating the result.");
+                        return StatusCode(500, "Lỗi server kìa đồ ngu a hi hi!!.");
                     }
 
                 }
@@ -270,12 +316,11 @@ namespace Web.Controllers
                 catch (Exception ex)
                 {
                     Console.Error.WriteLine($"Error updating result: {ex.Message}");
-                    return StatusCode(500, "An error occurred while updating the result.");
+                    return StatusCode(500, "Lỗi server kìa đồ ngu a hi hi!!.");
                 }
             }
             try
             {
-
                 var examVM = new ExamDetailsVM
                 {
                     Id = exam.Id,
@@ -290,7 +335,7 @@ namespace Web.Controllers
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Error updating result: {ex.Message}");
-                return StatusCode(500, "An error occurred while updating the result.");
+                return StatusCode(500, "Lỗi server kìa đồ ngu a hi hi!!.");
             }
         }
 
@@ -305,9 +350,8 @@ namespace Web.Controllers
 
             foreach (var answer in answers)
             {
-                var resultDetail = await _repo.GetOneAsync<ResultDetails>
-                        (rd => rd.QuestionId == answer.QuestionId &&
-                            rd.Result.UserId == this.CurrentUserId);
+                var resultDetail = await _repo.GetOneAsync<ResultDetails>(
+                    rd => rd.QuestionId == answer.QuestionId && rd.Result.UserId == this.CurrentUserId);
                 if (resultDetail != null)
                 {
                     resultDetail.AnswerId = answer.AnswerId;
@@ -323,26 +367,41 @@ namespace Web.Controllers
                 }
             }
 
-            // tính điểm 
-            var result = await _repo.GetOneAsync<Result>(x => x.UserId == answers[0].UserId && x.ExamId == answers[0].ExamId);
+            // Calculate score and update result
+            var result = await _repo.GetOneAsync<Result>(
+                x => x.UserId == answers[0].UserId && x.ExamId == answers[0].ExamId);
+
             var exam = await _repo.GetOneAsync<Exam>(x => x.Id == answers[0].ExamId);
 
-            var resultDetails = _repo.GetAll<ResultDetails>(x => x.ResultId == result.Id);
+            var resultDetails = await _repo.GetAll<ResultDetails>(x => x.ResultId == result.Id).ToListAsync();
             int totalQuestion = exam.EQCount + exam.MQCount + exam.HQCount;
             int numCorrect = 0;
-            foreach (var resultDetail in resultDetails)
-            {
-                var answer = await _repo.GetOneAsync<Answer>(Answer => Answer.Id == resultDetail.AnswerId && Answer.Status == true);
 
-                if (answer.Id == resultDetail.AnswerId)
+            try
+            {
+                // Tải tất cả các câu trả lời hợp lệ trước
+                var validAnswers = await _repo.GetAll<Answer>(x => x.Status == true).ToListAsync();
+                foreach (var resultDetail in resultDetails)
                 {
-                    numCorrect++;
+                    var answer = validAnswers.FirstOrDefault(x => x.QuestionId == resultDetail.QuestionId);
+                    if (answer != null && answer.Id == resultDetail.AnswerId)
+                    {
+                        numCorrect++;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error updating result detail: {ex.Message}");
+                return StatusCode(500, ex.Message);
             }
 
             result.TestScores = Math.Round((double)numCorrect / totalQuestion * 10, 2);
             TimeSpan temp = DateTime.Now - result.StartTime;
             result.TotalWorkTime = (int)temp.TotalSeconds;
+            result.NumCorrect = numCorrect;
+            result.EndTime = DateTime.Now;
+
             try
             {
                 await _repo.UpdateAsync(result);
@@ -352,12 +411,9 @@ namespace Web.Controllers
                 return StatusCode(500, ex.Message);
             }
 
-            return Ok(new
-            {
-                message = "bạn đã nộp bài thi"
-            });
-        }
+            return Ok(new { message = "bạn đã nộp bài thi" });
 
+        }
 
     }
 }

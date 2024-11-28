@@ -71,7 +71,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="block block-rounded block-fx-pop">
-                                        <div class="body-content body-content-full border-start border-3" :class="item.isStatus == 0 ? 'border-warning' : item.isStatus == 1 ? 'border-primary' : 'border-danger' ">
+                                        <div class="body-content body-content-full border-start border-3"
+                                             :class="item.isStatus == 0 ? 'border-warning' : item.isStatus == 1 ? 'border-primary' : item.isStatus == 2 ? 'border-danger' : item.isStatus == 3 ? 'border-info' : 'border-success'">
+                                            
                                             <div class="d-md-flex justify-content-between align-items-md-center">
                                                 <div class="p-1 p-md-3">
                                                     <h3 class="h4 fw-bold mb-3">
@@ -90,19 +92,26 @@
                                                 </div>
                                                 <div class="p-1 p-md-3">
                                                     <template x-if="item.isStatus == 0">
-                                                        <button class="btn btn-soft-warning rounded-pill px-3 me-1 my-1" disabled>Chưa mở</button>
+                                                        <button class="btn btn-outline-warning rounded-pill px-3 me-1 my-1" disabled>Chưa mở</button>
                                                     </template>
                                                     <template x-if="item.isStatus == 1">
-                                                        <button class="btn btn-soft-primary rounded-pill px-3 me-1 my-1" disabled>Đang mở</button>
+                                                        <button class="btn btn-outline-primary rounded-pill px-3 me-1 my-1" disabled>Đang mở</button>
                                                     </template>
                                                     <template x-if="item.isStatus == 2">
-                                                        <button class="btn btn-soft-danger rounded-pill px-3 me-1 my-1" disabled>Hết hạn</button>
+                                                        <button class="btn btn-outline-danger rounded-pill px-3 me-1 my-1" disabled>Hết hạn</button>
                                                     </template>
 
+                                                    <template x-if="item.isStatus == 3">
+                                                        <button class="btn btn-outline-info rounded-pill px-3 me-1 my-1" disabled>Chưa hoàn thành</button>
+                                                    </template>
+                                                    <template x-if="item.isStatus == 4">
+                                                        <button class="btn btn-outline-success rounded-pill px-3 me-1 my-1" disabled>Hoàn thành</button>
+                                                    </template>
                                                     <a class="btn btn-soft-success rounded-pill px-3 me-1 my-1"
                                                        :href="`Test/StartTest/${item.id}`" >
                                                         <i class="las la-eye opacity-50 me-1 text-body"></i> Xem chi tiết
                                                     </a>
+
                                                 </div>
                                             </div>
                                         </div>

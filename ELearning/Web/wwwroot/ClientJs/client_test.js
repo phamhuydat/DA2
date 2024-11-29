@@ -10,6 +10,7 @@
         init() {
             this.refreshData();
         },
+
         refreshData() {
             fetch("/Test/LoadListExam")
                 .then(x => x.json())
@@ -36,10 +37,9 @@
         get paginatedList() {
             const start = (this.currentPage - 1) * this.pageSize;
             const end = start + this.pageSize;
-            console.log(this.filteredList.slice(start, end))
             return this.filteredList.slice(start, end);
-
         },
+
         get totalPages() {
             return Math.ceil(this.filteredList.length / this.pageSize);
         },

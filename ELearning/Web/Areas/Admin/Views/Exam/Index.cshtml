@@ -98,6 +98,13 @@
                                                     <i class="la la-times opacity-50 me-1"></i> Xoá đề
                                                 </a>
                                             }
+                                            @if (!item.IsAuto)
+                                            {
+                                                <a class="btn btn-soft-info rounded-pill px-3 my-1"
+                                                   asp-action="AddManualExam" asp-controller="Exam" asp-area="Admin" asp-route-id="@item.Id">
+                                                    <i class="la la-question opacity-50 me-1"></i> Tạo câu hỏi
+                                                </a>
+                                            }
                                         </div>
                                     </div>
                                 </div>

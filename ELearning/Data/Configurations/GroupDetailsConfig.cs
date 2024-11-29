@@ -9,6 +9,7 @@ namespace Data.Configurations
         public void Configure(EntityTypeBuilder<GroupDetails> builder)
         {
             builder.HasKey(x => new { x.Id, x.GroupId, x.UserId });
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.HasOne(x => x.Group)
                 .WithMany(x => x.GroupDetails)

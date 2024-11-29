@@ -99,7 +99,7 @@
             }
         },
         // Nộp bài thi
-        async submitAnswers() {
+        submitAnswers() {
             this.checkUnansweredQuestions();
             if (this.unansweredQuestions.length > 0) {
                 showNotification({

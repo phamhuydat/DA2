@@ -109,7 +109,6 @@ namespace Web.Areas.Admin.Controllers
                 });
             }
 
-
             var group = _mapper.Map<Group>(model);
             group.Status = true;
             group.InvitationCode = GenerateRandomCode();

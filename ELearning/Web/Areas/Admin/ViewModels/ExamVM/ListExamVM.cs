@@ -5,13 +5,11 @@ namespace Web.Areas.Admin.ViewModels.ExamVM
 {
     public class ListExamVM : ListItemBaseVM
     {
-        public ListExamVM()
-        {
-        }
         public string Title { get; set; }
         public DateTime TimeStart { get; set; }
         public DateTime TimeEnd { get; set; }
         public string ListGroup { get; set; }
+        public bool IsAuto { get; set; }
 
         public int IsStatus
         {

@@ -1,6 +1,8 @@
 ﻿document.addEventListener("alpine:init", () => {
     Alpine.data("detailExam", () => ({
         _list: [],
+        _resultDetails: [],
+        _modalExam: {},
         allData: [],
         groups: [],
         ExamId: 0,
@@ -21,11 +23,10 @@
         averageScore: 0,
 
         init() {
+            this._modalExam = new bootstrap.Modal("#modal-show-test");
+
             this.ExamId = this.getIdFromUrl();
             this.refreshData();
-            //this.statistic()
-
-
         },
 
         getIdFromUrl() {
@@ -127,8 +128,6 @@
 
         // thống kê số lượng học sinh đã làm, chưa làm, đang làm và điểm trung bình của sinh viên đã làm
         statistic() {
-            console.log(this._list);
-
             this.studentSuccess = this._list.filter(item => item.status === 1).length;
             this.studentNotDo = this._list.filter(item => item.status === 2).length;
             this.studentDoing = this._list.filter(item => item.status === 0).length;
@@ -145,7 +144,65 @@
 
             this.averageScore = count > 0 ? (sum / count).toFixed(2) : 0;
 
+        },
+
+        ShowTakeExam(id) {
+            this._modalExam.show();
+
+            fetch(`/Admin/Exam/ResultDetail/?userId=${id}&examId=${this.ExamId}`)
+                .then(x => x.json())
+                .then(json => {
+                    this._resultDetails = json;
+                    console.log(json);
+                })
+                .catch(err => {
+                    console.log(err);
+                    showNotification({
+                        type: 'success',
+                        message: "không có bài làm",
+                    });
+                });
+        },
+
+        print_pdf(id) {
+
+            fetch(`/Admin/Exam/ExportPDF/?userId=${id}&examId=${this.ExamId}`,
+                { method: "POST" })
+                .then(response => response.text())
+                .then(base64String => {
+                    // Chuyển chuỗi base64 sang tệp blob
+                    const binaryString = atob(base64String);
+                    const binaryLen = binaryString.length;
+                    const bytes = new Uint8Array(binaryLen);
+
+                    for (let i = 0; i < binaryLen; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    const blob = new Blob([bytes], { type: "application/pdf" });
+                    const url = URL.createObjectURL(blob);
+
+                    // Tạo liên kết ẩn để tải xuống tệp
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "ket_qua_thi.pdf";
+                    a.style.display = "none";
+                    document.body.appendChild(a);
+                    a.click();
+
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                })
+                .catch(error => {
+                    console.error("Lỗi khi tải file PDF:", error);
+                });
         }
 
+
+
+
     }));
+
 });

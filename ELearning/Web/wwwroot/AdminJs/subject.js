@@ -178,7 +178,6 @@ document.addEventListener("alpine:init", () => {
                     this.refreshData();
                     showNotification({
                         type: 'success',
-                        //icon: 'btn-close',
                         message: json.message,
                     });
 

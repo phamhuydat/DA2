@@ -138,11 +138,15 @@
                                                 <td class="text-center" x-text="formatTime(item.totalWorkingTime)"></td>
                                                 <td class="text-center" x-text="item.numTSC"></td>
                                                 <td class="text-center">
-                                                    <a class="btn btn-sm btn-soft-secondary show-exam-detail" href="javascript:void(0)"
-                                                       data-bs-toggle="tooltip" aria-label="Xem chi tiết" data-bs-original-title="Xem chi tiết">
+                                                    <a class="btn btn-sm btn-soft-secondary" href="javascript:void(0)"
+                                                       data-bs-toggle="tooltip" aria-label="Xem chi tiết" 
+                                                       data-bs-original-title="Xem chi tiết"
+                                                        x-on:click="ShowTakeExam(item.id)">
                                                         <i class="las la-eye"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-soft-secondary print-pdf" href="javascript:void(0)">
+                                                    <a class="btn btn-sm btn-soft-secondary print-pdf" 
+                                                        href="javascript:void(0)"
+                                                        x-on:click="print_pdf(item.id)">
                                                         <i class="las la-print"></i>
                                                     </a>
                                                 </td>
@@ -264,25 +268,72 @@
 
     </div>
 
-</div>
+     @* modal chi tiết bài thi của học sinh *@ 
 
-<div class="modal fade" id="modal-cau-hoi" tabindex="-1" role="dialog" aria-labelledby="modal-cau-hoi"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chi tiết đề thi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pb-1">
-                <div id="list-question"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Đóng</button>
+    <div class="modal fade" id="modal-show-test" tabindex="-1" role="dialog" aria-labelledby="modal-cau-hoi"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết kết quả</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-1">
+                    <div id="content-file">
+                        <template x-for="(item, index) in _resultDetails">
+                            <div class="question rounded border mb-3">
+                                <div class="question-top p-3">
+                                    <p class="question-content fw-bold mb-3" x-text="index + 1 + '. ' + item.content">
+                                    </p>
+                                    <div class="row">
+                                        <template x-for="(answer, index) in item.answers">
+                                            <div class="col-6 mb-1">
+                                                <b x-text="String.fromCharCode(65 + index)"></b>
+                                                <span x-text="answer.answerContent"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <div class="test-ans bg-primary rounded-bottom py-2 px-3 d-flex align-items-center">
+                                    <p class="mb-0 text-white me-4">Đáp án của bạn:</p>
+                                    <template x-for="(answer, index) in item.answers">
+
+                                        <button class="btn rounded-pill me-2 btn-answer-question"
+                                                x-bind:class="{'btn-success': answer.isCorrect == 1,
+                                                'btn-danger': answer.isCorrect == 0,
+                                                'btn-light': answer.isCorrect == null }"
+                                                x-text="String.fromCharCode(65 + index)">
+                                        </button>
+                                    </template>
+
+                                    <template x-if="item.check">
+                                        <span class="h2 mb-0 ms-1">
+                                            <i class="las la-check" style="color:#76BB68;"></i>
+                                        </span>
+                                    </template>
+
+                                    <template x-if="!item.check">
+                                        <span class="h2 mb-0 ms-1">
+                                            <i class=" las la-times" style="color:#FF5A5F;"></i>
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-alt-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Done</button>
+                </div>
             </div>
         </div>
     </div>
+
+
 </div>
+
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasSetting" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header border-bottom">
@@ -325,22 +376,5 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-show-test" tabindex="-1" role="dialog" aria-labelledby="modal-cau-hoi"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chi tiết kết quả</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pb-1">
-                <div id="content-file">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-alt-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Done</button>
-            </div>
-        </div>
-    </div>
-</div>
+
+

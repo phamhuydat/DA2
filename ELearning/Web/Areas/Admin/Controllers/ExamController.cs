@@ -3,9 +3,11 @@ using AutoMapper.QueryableExtensions;
 using Data;
 using Data.Entities;
 using Data.Repositories;
+using DinkToPdf;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Share.Consts;
+using System.Text;
 using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.ExamVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
@@ -13,6 +15,8 @@ using Web.Areas.Admin.ViewModels.SubjectVM;
 using Web.Common;
 using Web.WebConfig;
 using X.PagedList;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -175,6 +179,7 @@ namespace Web.Areas.Admin.Controllers
 
         // server get data exam
         [HttpGet]
+        [AppAuthorize(AuthConst.AppExam.VIEW_DETAIL)]
         public async Task<IActionResult> GetDetailExam(int id)
         {
             try
@@ -277,7 +282,7 @@ namespace Web.Areas.Admin.Controllers
                 data = model
             });
         }
-
+        [AppAuthorize(AuthConst.AppExam.DELETE)]
         // Delete Exam    
         public async Task<IActionResult> DeleteExam(int id)
         {
@@ -291,6 +296,7 @@ namespace Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [AppAuthorize(AuthConst.AppExam.VIEW_DETAIL)]
         // acton view detail exam
         [HttpGet]
         public IActionResult DetailExam(int id)
@@ -304,8 +310,8 @@ namespace Web.Areas.Admin.Controllers
             return View();
         }
 
-
         // mở bài thi
+        [AppAuthorize(AuthConst.AppExam.UPDATE)]
         public async Task<IActionResult> OpenExam(int id)
         {
             var exam = _repo.GetOneAsync<Exam>(x => x.Id == id).Result;
@@ -319,6 +325,7 @@ namespace Web.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> ListStudentOfTakingExam(int id)
         {
@@ -392,28 +399,155 @@ namespace Web.Areas.Admin.Controllers
             }
         }
 
-
         [HttpGet]
-        [Route("api/student-scores")]
-        public IActionResult GetScores()
+        public IActionResult ResultDetail(int userId, int examId)
         {
+            var data = _repo.GetOneAsync<Result>(x => x.UserId == userId && x.ExamId == examId).Result;
 
+            if (data == null)
+            {
+                return NotFound(new { message = "Result not found." });
+            }
 
-
-            // Danh sách điểm mẫu (có thể thay bằng dữ liệu từ database)
-            var scores = new List<int> { 1, 5, 7, 8, 5, 6, 7, 8, 9, 10, 4, 6, 5, 3, 2, 10, 8, 6 };
-
-
-            // Tính toán số lượng học sinh với điểm <= các mức từ 1 đến 10
-            var scoreCounts = Enumerable.Range(1, 10)
-                .Select(limit => scores.Count(s => s <= limit)) // Đếm số học sinh có điểm <= giới hạn
-                .ToList();
-
-            // Trả về dữ liệu dưới dạng JSON
-            return Ok(new { scores = scoreCounts });
+            var resultDetails = _db.ResultDetails
+                .Where(x => x.ResultId == data.Id)
+                .Join(_db.Question,
+                    rd => rd.QuestionId,
+                    q => q.Id,
+                    (rd, q) => new { rd, q })
+                .Select(x => new
+                {
+                    QuestionId = x.q.Id,
+                    Content = x.q.Content,
+                    UserIsCorrect = x.rd.AnswerId,
+                    Check = _db.Answers.Where(a => a.Id == x.rd.AnswerId).Single().Status,
+                    Answers = _db.Answers
+                        .Where(a => a.QuestionId == x.q.Id)
+                        .Select(a => new
+                        {
+                            AnswerId = a.Id,
+                            AnswerContent = a.AnswerContent,
+                            IsCorrect = ((a.Status && x.rd.AnswerId == a.Id) || a.Status) ? 1
+                                    : (!a.Status && x.rd.AnswerId == a.Id) ? 0 : (int?)null
+                        })
+                    .ToList()
+                })
+            .ToList();
+            return Ok(resultDetails);
         }
 
+        public async Task<string> ExportPDF(int userId, int examId)
+        {
+            var exam = _repo.GetOneAsync<Exam>(e => e.Id == examId).Result;
 
+            if (exam == null)
+            {
+                throw new Exception("Exam not found.");
+            }
 
+            var info = await _repo.GetOneAsync<Users>(x => x.Id == userId);
+
+            var result = await _repo.GetOneAsync<Result>(x => x.UserId == userId && x.ExamId == examId);
+
+            var resultDetail = _db.ResultDetails
+                .Where(x => x.ResultId == result.Id)
+                .Join(_db.Question,
+                    rd => rd.QuestionId,
+                    q => q.Id,
+                    (rd, q) => new { rd, q })
+                .Select(x => new
+                {
+                    QuestionId = x.q.Id,
+                    Content = x.q.Content,
+                    UserIsCorrect = x.rd.AnswerId,
+                    Check = _db.Answers.Where(a => a.Id == x.rd.AnswerId).Single().Status,
+                    Answers = _db.Answers
+                        .Where(a => a.QuestionId == x.q.Id)
+                        .Select(a => new
+                        {
+                            AnswerId = a.Id,
+                            AnswerContent = a.AnswerContent,
+                            IsCorrect = ((a.Status && x.rd.AnswerId == a.Id) || a.Status) ? 1
+                                    : (!a.Status && x.rd.AnswerId == a.Id) ? 0 : (int?)null
+                        })
+                    .ToList()
+                });
+
+            var html = new StringBuilder();
+            html.Append(@"
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+        <style>
+            * {padding: 0;margin: 0;box-sizing: border-box;}
+            body{font-family: 'Times New Roman', serif; padding: 50px 50px}
+        </style>
+    </head>
+    <body>
+        <table style='width:100%'>
+            <tr>
+                <td style='text-align: center;font-weight:bold'>
+                    TRƯỜNG ĐẠI HỌC Nam Cần Thơ<br>
+                    KHOA CÔNG NGHỆ THÔNG TIN<br><br><br>
+                </td>
+                <td style='text-align: center;'>
+                    <p style='font-weight:bold'>" + exam.Title.ToUpper() + @"</p>
+                    <p style='font-weight:bold'>Học phần: " + exam.SubjectId + @"</p>
+                    <p style='font-weight:bold'>Mã học phần: " + exam.SubjectId + @"</p>
+                    <p style='font-style:italic'>Thời gian làm bài: " + exam.WorkTime + @" phút</p>
+                </td>
+            </tr>
+        </table>
+         <table style=""width:100%;margin-bottom:10px"">
+                <tr style=""width:100%"">
+                    <td>Mã sinh viên:" + info.MSSV + @" </td>
+                    <td>Tên thí sinh:" + info.FullName + @"</td>
+                </tr>
+                <tr style=""width:100%"">                                                                                 
+                    <td>Số câu đúng:" + result.NumCorrect + '/' + result.exam.MQCount + result.exam.HQCount + result.exam.EQCount + @"</td>
+                    <td>Điểm:" + result.TestScores + @"</td>
+                </tr>
+            </table>       
+            <hr>
+            <div style=""margin-top:20px"">
+
+");
+
+            int index = 1; // Bắt đầu đánh số câu hỏi
+            foreach (var item in resultDetail)
+            {
+                html.Append("<li style='list-style:none'><strong>Câu " + index + "</strong>: " + item.Content + "<ol type='A' style='margin-left:30px'>");
+                foreach (var answer in item.Answers)
+                {
+                    var dapAn = answer.IsCorrect == 1 ? " (Đáp án chính xác)" : "";
+                    var dapAnChon = answer.AnswerId == item.UserIsCorrect ? " (Đáp án chọn)" : "";
+                    html.Append("<li>" + answer.AnswerContent + dapAnChon + dapAn + "</li>");
+                }
+
+                html.Append("</ol></li>");
+                index++; // Tăng số thứ tự câu hỏi
+            }
+            html.Append(@"
+    </div>
+    </body>
+    </html>");
+
+            var converter = new SynchronizedConverter(new PdfTools());
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings = new GlobalSettings
+                {
+                    ColorMode = ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = PaperKind.A4
+                },
+                Objects = { new ObjectSettings { HtmlContent = html.ToString() } }
+            };
+
+            var pdf = converter.Convert(doc);
+            return Convert.ToBase64String(pdf);
+        }
     }
 }
+

@@ -36,6 +36,7 @@
                                        data-provider="flatpickr" data-date-format="d-m-Y H:i"
                                        data-enable-time
                                        id="time-start"
+                                       name="time-start"
                                        x-model="_updinData.timeStart"
                                        placeholder="Từ">
                             </div>
@@ -46,6 +47,7 @@
                                        data-provider="flatpickr" data-date-format="d-m-Y H:i"
                                        data-enable-time
                                        id="time-end"
+                                       name="time-end"
                                        x-model="_updinData.timeEnd"
                                        placeholder="Đến">
                             </div>
@@ -57,6 +59,7 @@
                                 <span class="input-group-text">Thời gian làm bài</span>
                                 <input type="number" class="form-control text-center"
                                        id="exam-time"
+                                       name="exam-time"
                                        x-model="_updinData.workTime">
                                 <span class="input-group-text">phút</span>
                             </div>
@@ -104,7 +107,7 @@
                         <div :class="_updinData.autoExam ? 'mb-4' : 'mb-4 d-none' ">
                             <label class="form-label">Chương</label>
                             <select class="form-control"
-                                    id="choices-multiple-remove-button chapter"
+                                    id="choices-multiple-remove-button chapter chuong"
                                     x-ref="selectElement"
                                     multiple>
                             </select>
@@ -114,22 +117,22 @@
                             <div class="row">
                                 <div class="col-4">
                                     <label class="form-label" for="coban">Số câu dễ</label>
-                                    <input type="number" class="form-control" x-model="_updinData.eqCount">
+                                    <input type="number" class="form-control" id="coban" name="coban" x-model="_updinData.eqCount">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label" for="trungbinh">Số câu trung bình</label>
-                                    <input type="number" class="form-control" x-model="_updinData.mqCount">
+                                    <input type="number" class="form-control" id="trungbinh" name="trungbinh" x-model="_updinData.mqCount">
                                 </div>
                                 <div class="col-4">
                                     <label class="form-label" for="kho">Số câu khó</label>
-                                    <input type="number" class="form-control" x-model="_updinData.hqCount">
+                                    <input type="number" class="form-control" id="kho" name="kho" x-model="_updinData.hqCount">
                                 </div>
                             </div>
                         </div>
                         <div class="mb-4">
                             <button type="button" class="btn btn-hero btn-primary"
                                     x-on:click="SaveExam()">
-                                <i class="fa fa-fw fa-plus me-1"></i> Tạo đề
+                                <i class="fa fa-fw fa-plus me-1"></i> Lưu bài thi
                             </button>
                         </div>
                     </div>

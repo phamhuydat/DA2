@@ -110,6 +110,30 @@ document.addEventListener("alpine:init", () => {
         },
         _listContentFile: [],
 
+        currentPage: 1,
+        itemsPerPage: 10,
+        searchTerm: "",
+
+        get filteredList() {
+            if (!this.searchTerm) {
+                return this._list;
+            }
+            return this._list.filter(item =>
+                item.content.toLowerCase().includes(this.searchTerm.toLowerCase())
+            );
+        },
+
+        get paginatedList() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredList.slice(start, end);
+        },
+
+        get totalPages() {
+            return Math.ceil(this.filteredList.length / this.itemsPerPage);
+        },
+
+
         init() {
             var config = {
                 durations: {
@@ -432,6 +456,23 @@ document.addEventListener("alpine:init", () => {
                 answer.rowIndex = idx + 1;
             });
         },
+
+
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+
+        goToPage(page) {
+            this.currentPage = page;
+        }
 
 
     }))

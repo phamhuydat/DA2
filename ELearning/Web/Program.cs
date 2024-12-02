@@ -1,21 +1,25 @@
-﻿using Web.WebConfig;
-using Data;
-using Microsoft.EntityFrameworkCore;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using Web.WebConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+
 
 
 builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

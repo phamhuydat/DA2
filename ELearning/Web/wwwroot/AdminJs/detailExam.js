@@ -136,8 +136,8 @@
             let sum = 0;
             let count = 0;
             this._list.forEach(item => {
-                if (item.status === 2) {
-                    sum += item.score;
+                if (item.status === 1) {
+                    sum += item.testScores;
                     count++;
                 }
             });
@@ -153,7 +153,6 @@
                 .then(x => x.json())
                 .then(json => {
                     this._resultDetails = json;
-                    console.log(json);
                 })
                 .catch(err => {
                     console.log(err);
@@ -165,13 +164,10 @@
         },
 
         print_pdf(id) {
-
-            fetch(`/Admin/Exam/ExportPDF/?userId=${id}&examId=${this.ExamId}`,
-                { method: "POST" })
+            fetch(`/Admin/File/ExportPDF/?userId=${id}&examId=${this.ExamId}`, { method: "POST" })
                 .then(response => response.text())
                 .then(base64String => {
-                    // Chuyển chuỗi base64 sang tệp blob
-                    const binaryString = atob(base64String);
+                    const binaryString = atob(base64String);  // Giải mã base64
                     const binaryLen = binaryString.length;
                     const bytes = new Uint8Array(binaryLen);
 
@@ -182,10 +178,10 @@
                     const blob = new Blob([bytes], { type: "application/pdf" });
                     const url = URL.createObjectURL(blob);
 
-                    // Tạo liên kết ẩn để tải xuống tệp
+                    // Tạo liên kết ẩn để tải xuống tệp PDF
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "ket_qua_thi.pdf";
+                    a.download = "result.pdf";
                     a.style.display = "none";
                     document.body.appendChild(a);
                     a.click();
@@ -198,6 +194,8 @@
                 .catch(error => {
                     console.error("Lỗi khi tải file PDF:", error);
                 });
+
+
         }
 
 

@@ -25,10 +25,15 @@
         init() {
             this.examId = this.getIdFromUrl();
             this.fetchQuestions();
+
+
         },
 
         // Thiết lập đếm ngược
         startCountdown(workTimeInSeconds) {
+            if (workTimeInSeconds == 0) {
+                this.submitAnswers(); // Nộp bài tự động
+            }
             this.infoExam.workTime = this.formatTime(workTimeInSeconds); // Thời gian ban đầu
 
             this.countdownInterval = setInterval(() => {
@@ -38,7 +43,6 @@
                 if (workTimeInSeconds <= 0) {
                     clearInterval(this.countdownInterval);
                     this.infoExam.workTime = "00:00:00";
-                    this.submitAnswers(); // Nộp bài tự động
                 } else {
                     this.infoExam.workTime = this.formatTime(workTimeInSeconds);
                 }
@@ -66,10 +70,6 @@
                     };
                 });
 
-                console.log(this.infoExam);
-                console.log(this.userAnswers);
-                console.log(this._listQuestion);
-
                 // Bắt đầu đếm ngược
                 const workTimeInSeconds = this.infoExam.workTime;
                 this.startCountdown(workTimeInSeconds);
@@ -77,7 +77,7 @@
                 console.error('Fetch error:', error);
                 showNotification({
                     type: 'error',
-                    message: 'Không thể tải bài thi. Vui lòng thử lại!',
+                    message: 'Đang tải bài thi. Vui lòng thử lại!',
                 });
             }
         },

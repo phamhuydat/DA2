@@ -28,7 +28,6 @@ document.addEventListener("alpine:init", () => {
 
 
         BtnJoinGroup() {
-            console.log(this.invitedCode);
             fetch("/GroupUser/JoinGroup", {
                 method: "POST",
                 headers: {

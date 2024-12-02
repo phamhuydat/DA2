@@ -36,6 +36,7 @@
                                        data-provider="flatpickr" data-date-format="d-m-y H:i"
                                        data-enable-time
                                        id="time-start"
+                                       name="time-start"
                                        x-model="_updinData.timeStart"
                                        placeholder="Từ">
                             </div>
@@ -46,6 +47,7 @@
                                        data-provider="flatpickr" data-date-format="d-m-y H:i"
                                        data-enable-time
                                        id="time-end"
+                                       name="time-end"
                                        x-model="_updinData.timeEnd"
                                        placeholder="Đến">
                             </div>
@@ -57,7 +59,8 @@
                                 <span class="input-group-text">Thời gian làm bài</span>
                                 <input type="number" class="form-control text-center"
                                        id="exam-time"
-                                        x-model="_updinData.workTime">
+                                       name="exam-time"
+                                       x-model="_updinData.workTime">
                                 <span class="input-group-text">phút</span>
                             </div>
                         </div>
@@ -101,11 +104,9 @@
                             </div>
                         </div>
 
-
                         <div :class="_updinData.autoExam ? 'mb-4' : 'mb-4 d-none' ">
                             <label class="form-label">Chương</label>
                             <select class="form-control"
-                                    
                                     id="choices-multiple-remove-button chapter"
                                     x-ref="selectElement"
                                     multiple>

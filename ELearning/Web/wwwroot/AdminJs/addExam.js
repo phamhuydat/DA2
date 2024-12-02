@@ -10,8 +10,10 @@
     // Trả về số phút tính được
     return diffMins;
 }
+
 function getToTalQuestionOfChapter(chuong, monhoc, dokho) {
     var result = 0;
+    console.log(chuong, monhoc, dokho);
     $.ajax({
         url: "/Admin/Exam/GetCountQuestion  ",
         type: "post",
@@ -22,13 +24,46 @@ function getToTalQuestionOfChapter(chuong, monhoc, dokho) {
         },
         async: false,
         success: function (response) {
+            console.log(response);
             result = response;
         },
     });
     return result;
 }
+let groups = [];
 
 $(document).ready(() => {
+    function getMinutesBetweenDates(start, end) {
+        // Chuyển đổi đối số thành đối tượng Date
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        // Tính số phút giữa hai khoảng thời gian
+        const diffMs = endDate.getTime() - startDate.getTime();
+        const diffMins = Math.round(diffMs / 60000);
+
+        // Trả về số phút tính được
+        return diffMins;
+    }
+    function getToTalQuestionOfChapter(chuong, monhoc, dokho) {
+        var result = 0;
+        console.log(chuong, monhoc, dokho);
+        $.ajax({
+            url: "/Admin/Exam/GetCountQuestion",
+            type: "post",
+            data: {
+                subjectId: monhoc,
+                chapterId: chuong,
+                level: dokho,
+            },
+            async: false,
+            success: function (response) {
+                result = response;
+            },
+        });
+        return result;
+    }
+
     $('.jq-select2').select2();
     // Initialize jqValidation setup for real-time  site.js
     jqValidation();
@@ -63,6 +98,7 @@ $(document).ready(() => {
                 ? groups[$("#nhom-hp").val()].mamonhoc
                 : 0;
             const totalQuestions = parseInt(getToTalQuestionOfChapter(chapter, subjectId, param), 10);
+            console.log(totalQuestions);
             return totalQuestions >= parseInt(value, 10);
         },
         "Số lượng câu hỏi không đủ"
@@ -187,6 +223,7 @@ document.addEventListener("alpine:init", () => {
 
         init() {
             if (this.getIdFromUrl() != "createExam") {
+
                 this.LoadDataEdit();
                 this.LoadListGroup();
             }

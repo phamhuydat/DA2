@@ -1,11 +1,13 @@
-﻿using Data;
-using Data.Repositories;
-using AspNetCoreHero.ToastNotification;
+﻿using AspNetCoreHero.ToastNotification;
 using AutoMapper;
+using Data;
+using Data.Repositories;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Web.Common.Mailer;
-using Microsoft.Extensions.Options;
+using Web.Services;
 
 namespace Web.WebConfig
 {
@@ -22,35 +24,16 @@ namespace Web.WebConfig
                 opt.EnableSensitiveDataLogging();
             });
             services.AddScoped<GenericRepository>();
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+            services.AddScoped<IPDFService, PDFService>();
 
             // Cấu hình đăng nhập
-
-            // services.AddAuthentication(options =>
-            // {
-            //     options.DefaultScheme = AppConst.CLIENT_COOKIES_AUTH; // Scheme mặc định
-            //     options.DefaultChallengeScheme = AppConst.ADMIN_COOKIES_AUTH; // Scheme để thách thức
-            // })
-            //.AddCookie(AppConst.ADMIN_COOKIES_AUTH, options =>  // Đăng ký scheme cho Admin
-            //{
-            //    options.LoginPath = AppConst.ADMIN_LOGIN_PATH; // Đường dẫn cho admin login
-            //    options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
-            //    options.Cookie.HttpOnly = true;
-            //})
-            //.AddCookie(AppConst.CLIENT_COOKIES_AUTH, options =>
-            //{
-            //    options.LoginPath = AppConst.LOGIN_PATH; // Đường dẫn cho client login
-            //    options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
-            //    options.Cookie.HttpOnly = true;
-            //});
-
             services.AddAuthentication(AppConst.COOKIES_AUTH).AddCookie(options =>
             {
                 options.LoginPath = AppConst.LOGIN_PATH;
                 options.ExpireTimeSpan = TimeSpan.FromHours(AppConst.LOGIN_TIMEOUT);
                 options.Cookie.HttpOnly = true;
             });
-
-
 
 
             // Cấu hình AutoMapper

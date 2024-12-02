@@ -7,10 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="ViewModels\ExamClientVM\**" />
-	  <Content Remove="ViewModels\ExamClientVM\**" />
-	  <EmbeddedResource Remove="ViewModels\ExamClientVM\**" />
-	  <None Remove="ViewModels\ExamClientVM\**" />
+		<Compile Remove="ViewModels\ExamClientVM\**" />
+		<Content Remove="ViewModels\ExamClientVM\**" />
+		<EmbeddedResource Remove="ViewModels\ExamClientVM\**" />
+		<None Remove="ViewModels\ExamClientVM\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -48,5 +48,18 @@
 		<Folder Include="Areas\Admin\Data\" />
 		<Folder Include="Areas\Admin\Models\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="libwkhtmltox.dll">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="libwkhtmltox.dylib">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="libwkhtmltox.so">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 
 </Project>

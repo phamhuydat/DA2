@@ -25,8 +25,6 @@
         init() {
             this.examId = this.getIdFromUrl();
             this.fetchQuestions();
-
-
         },
 
         // Thiết lập đếm ngược

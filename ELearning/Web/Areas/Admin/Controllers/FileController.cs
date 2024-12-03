@@ -24,6 +24,7 @@ namespace Web.Areas.Admin.Controllers
             _pDFService = pDFService;
         }
 
+        // xuất file pdf bài thi của học sinh
         public async Task<string> ExportPDF(int userId, int examId)
         {
 
@@ -142,7 +143,18 @@ namespace Web.Areas.Admin.Controllers
 
         }
 
+        // xuất bảng điểm của lớp học
+        public async Task<IActionResult> ExportExcelTranscript(int GroupId)
+        {
 
+            var group = await _repo.GetOneAsync<Group>(x => x.Id == GroupId);
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
 
 
 

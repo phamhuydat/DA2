@@ -6,6 +6,7 @@ using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.ExamVM;
 using Web.Areas.Admin.ViewModels.GroupDetailVM;
 using Web.Areas.Admin.ViewModels.GroupVM;
+using Web.Areas.Admin.ViewModels.NotifyVM;
 using Web.Areas.Admin.ViewModels.QuestionVM;
 using Web.Areas.Admin.ViewModels.Role;
 using Web.Areas.Admin.ViewModels.SubjectVM;
@@ -79,6 +80,15 @@ namespace Web.WebConfig
 
 
             CreateMap<Question, Question>().ReverseMap();
+
+
+            // map dữ liệu từ AddOrEditNotifyVM sang Notification
+            CreateMap<AddOrEditNotifyVM, Notification>().ReverseMap();
+            CreateMap<Notification, AddOrEditNotifyVM>().ReverseMap();
+
+            // map dữ liệu từ NotifyDetailsVM sang NotificationDetails
+            CreateMap<NotifyDetailsVM, NotificationDetails>().ReverseMap();
+            CreateMap<NotificationDetails, NotifyDetailsVM>().ReverseMap();
 
         }
 
@@ -263,6 +273,20 @@ namespace Web.WebConfig
                 .ReverseMap();
         });
 
+
+        // cau hinh mapper cho NotificationController, Index
+        public static MapperConfiguration NotificationIndexConf = new(mapper =>
+        {
+            mapper.CreateMap<Notification, ListNoifyVM>()
+                .ForMember(vm => vm.Content, opts => opts.MapFrom(entity => entity.Content))
+                .ForMember(vm => vm.CreateName, opts => opts.MapFrom(entity => entity.CreateName))
+                .ForMember(vm => vm.CreateDate, opts => opts.MapFrom(entity => entity.CreatedDate))
+                .ForMember(dest => dest.ListGroup, opt => opt.MapFrom
+                (
+                    uEntity => string.Join(", ", uEntity.NotificationDetailsDetails.Select(p => p.Group.GroupName))
+                ))
+                .ReverseMap();
+        });
 
 
     }

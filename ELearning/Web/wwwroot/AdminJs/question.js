@@ -176,7 +176,8 @@ document.addEventListener("alpine:init", () => {
         },
         LoadChapter() {
             // Lấy danh sách chương theo môn học
-            fetch(`/Admin/Question/GetChapter?subjectId=${this._updinData.subjectId}`)
+            fetch(`/Admin/Question/GetChapter?subjectId=${this._updinData.subjectId
+                }`)
                 .then(x => x.json())
                 .then(json => {
                     this._listChapter = json;
@@ -213,7 +214,7 @@ document.addEventListener("alpine:init", () => {
             };
 
             //get data from server
-            fetch(`/Admin/Question/GetQuestionById?id=${idQuestion}`)
+            fetch(`/ Admin / Question / GetQuestionById ? id = ${idQuestion}`)
                 .then(x => x.json())
                 .then(json => {
                     this._updinData.subjectId = json.subjectId;

@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using Data.Repositories;
-using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using Web.Models;
 using Web.WebConfig;
 
 namespace Web.Controllers

@@ -53,8 +53,35 @@ namespace Web.Areas.Admin.Controllers
         {
             var model = new List<Subject>();
 
-            var data = _repo.GetAll<Subject>()
-                .ProjectTo<ListSubjectVM>(AutoMapperProfile.SubjectIndexConf).ToList();
+            var data = new List<ListSubjectVM>();
+
+            if (this.RoleId == ROLE_ADMIN_ID)
+            {
+                data = _repo.GetAll<Subject>()
+                        .ProjectTo<ListSubjectVM>(AutoMapperProfile.SubjectIndexConf).ToList();
+            }
+            else
+            {
+                // lấy ra danh sách môn học của giáo viên có trong groupdetail
+                data = _repo.GetAll<GroupDetails>(x => x.UserId == CurrentUserId)
+                        .Join(_db.Groups,
+                            gd => gd.GroupId,
+                            g => g.Id,
+                            (gd, g) => new { gd, g })
+                        .Join(_db.Subject,
+                            grp => grp.g.SubjectId,
+                            s => s.Id,
+                            (grp, s) => new { grp.gd, grp.g, s })
+                        .Select(x => new ListSubjectVM
+                        {
+                            Id = x.s.Id,
+                            SubjectCode = x.s.SubjectCode,
+                            SubjectName = x.s.SubjectName
+                        })
+                        .ToList();
+            }
+
+
 
             var mapData = data.Select(m => new
             {
@@ -281,6 +308,8 @@ namespace Web.Areas.Admin.Controllers
                 data = model
             });
         }
+
+
         [AppAuthorize(AuthConst.AppExam.DELETE)]
         // Delete Exam    
         public async Task<IActionResult> DeleteExam(int id)

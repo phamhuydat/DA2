@@ -106,30 +106,6 @@ namespace Web.Areas.Admin.Controllers
             return await _repo.GetOneAsync<Users>(u => u.MSSV == mssv);
         }
 
-        //[HttpPost]
-        //[AppAuthorize(AuthConst.AppUser.CREATE)]
-
-        //public async Task<IActionResult> ImportData(ImportData model)
-        //{
-        //	const string NO_DEPARTMENT = "Công ty này không có thông tin phòng ban, không thể import (có thể chọn vào \"Cho phép tự động thêm phòng ban nếu chưa tồn tại trong hệ thống\" để xử lý tự động).";
-        //	const string EMPTY_FILE_CONTENT = "Dữ liệu import không hợp lệ.";
-        //	const string INVALID_DEPARTMENT = "Dữ liệu phòng ban không khớp với dữ liệu trong hệ thống ở dòng {0}.";
-        //	const string IMPORT_SUCCESSFULLY = "Import thành công dữ liệu của {0} người.";
-        //	const string ERROR_MESSAGE_NOT_NULL = "Chưa có dữ liệu về {0}.";
-
-
-        //	int errorRow = -1;
-
-        //	if (!ModelState.IsValid || !model.FileExcel.FileName.ToUpper().EndsWith(".XLSX"))
-        //	{
-        //		return Ok(new AjaxAppResponse
-        //		{
-        //			Success = false,
-        //			Message = MODEL_STATE_INVALID_MESG,
-        //		});
-        //	}
-        //}
-
         [HttpPost]
         [AppAuthorize(AuthConst.AppUser.UPDATE)]
 
@@ -192,5 +168,74 @@ namespace Web.Areas.Admin.Controllers
             return Ok(result);
 
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            int id = this.CurrentUserId;
+
+            var user = await _repo.GetOneAsync<Users>(u => u.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = _mapper.Map<UserAddOrEditVM>(user);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserAddOrEditVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                SetErrorMesg(MODEL_STATE_INVALID_MESG, true);
+                return View(model);
+            }
+
+            var user = await _repo.GetOneAsync<Users>(u => u.Id == model.Id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(model, user);
+            user.UpdatedBy = this.CurrentUserId;
+            user.UpdatedDate = DateTime.Now;
+            await _repo.UpdateAsync(user);
+
+            SetSuccessMesg("Cập nhật thông");
+
+            return View();
+        }
+
+        public async Task<IActionResult> ChangePassword(ChangePwdVM model)
+        {
+            var user = await _repo.FindAsync<Users>(CurrentUserId);
+            if (user == null)
+            {
+                _notyf.Error("Không tìm thấy thông tin người dùng");
+                return View(model);
+            }
+            if (BCrypt.Net.BCrypt.Verify(model.Pwd, user.Password) == false)
+            {
+                _notyf.Error("Mật khẩu cũ không chính xác");
+                return View(model);
+            }
+            if (model.NewPwd != model.ConfirmPassword)
+            {
+                _notyf.Error("Mật khẩu mới không khớp");
+                return View(model);
+            }
+            user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPwd);
+            await _repo.UpdateAsync(user);
+            _notyf.Success("Đổi mật khẩu thành công");
+            return View(model);
+
+        }
+
+
+
     }
 }

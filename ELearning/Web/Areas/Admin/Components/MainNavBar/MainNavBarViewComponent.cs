@@ -97,6 +97,15 @@ namespace Web.Areas.Admin.Components.MainNavBar
                     Icon = "chalkboard-teacher",
                     Permission = AuthConst.AppExam.VIEW_DETAIL,
                 },
+                 new MenuItem
+                {
+                    Action = "Index",
+                    Controller = "Notify",
+                    DisplayText = "Thông báo",
+                    SidebarText = "Notify",
+                    Icon = "bell",
+                    Permission = AuthConst.AppNotification.VIEW_DETAIL,
+                },
             });
             return View(navBar);
         }

@@ -14,6 +14,7 @@ using Web.WebConfig;
 
 namespace Web.Controllers
 {
+
     [AllowAnonymous]
     public class AccountController : BaseController
     {
@@ -104,10 +105,36 @@ namespace Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public ActionResult Profile()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Profile(UpdateProfileVM model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                _notyf.Error("Vui lòng điền đủ thông tin");
+                return View(model);
+            }
+            var user = await _repo.FindAsync<Users>(CurrentUserId);
+            if (user == null)
+            {
+                _notyf.Error("Không tìm thấy thông tin người dùng");
+                return View(model);
+            }
+
+
+            user.FullName = model.fullname;
+            user.Email = model.email;
+
+            await _repo.UpdateAsync(user);
+            _notyf.Success("Cập nhật thông tin thành công");
+            SetSuccessMesg("Cập nhật thông tin thành công");
+            return View(model);
         }
 
         public async Task<IActionResult> Logout()
@@ -116,6 +143,32 @@ namespace Web.Controllers
             _notyf.Information("bạn đã đăng xuất");
             return RedirectToAction("Login", "Account");
         }
+
+        public async Task<IActionResult> ChangePassword(ChangePwdVM model)
+        {
+            var user = await _repo.FindAsync<Users>(CurrentUserId);
+            if (user == null)
+            {
+                _notyf.Error("Không tìm thấy thông tin người dùng");
+                return View(model);
+            }
+            if (BCrypt.Net.BCrypt.Verify(model.Pwd, user.Password) == false)
+            {
+                _notyf.Error("Mật khẩu cũ không chính xác");
+                return View(model);
+            }
+            if (model.NewPwd != model.ConfirmPassword)
+            {
+                _notyf.Error("Mật khẩu mới không khớp");
+                return View(model);
+            }
+            user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPwd);
+            await _repo.UpdateAsync(user);
+            _notyf.Success("Đổi mật khẩu thành công");
+            return View(model);
+
+        }
+
 
 
 
@@ -131,6 +184,6 @@ namespace Web.Controllers
                 System.IO.File.WriteAllText(file, $"Hello {username}!");
             }
         }
-
     }
+
 }

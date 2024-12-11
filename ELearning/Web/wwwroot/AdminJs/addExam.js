@@ -194,6 +194,7 @@ $(document).ready(() => {
     });
 });
 
+
 document.addEventListener("alpine:init", () => {
     Alpine.data("AddExam", () => ({
         _listSubject: [],
@@ -217,6 +218,7 @@ document.addEventListener("alpine:init", () => {
             submitWhenExit: false,
             showAnswer: false,
         },
+
         choicesInstance: null,
         selectedChapters: [],
 
@@ -280,7 +282,6 @@ document.addEventListener("alpine:init", () => {
                 });
         },
         LoadChapter() {
-
             fetch(`/Admin/Exam/GetChapter?subjectId=${this._updinData.subjectId}`)
                 .then(x => x.json())
                 .then(json => {

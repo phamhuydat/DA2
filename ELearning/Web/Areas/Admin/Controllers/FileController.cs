@@ -2,13 +2,13 @@
 using Data;
 using Data.Entities;
 using Data.Repositories;
-using DinkToPdf;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Share.Consts;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System.Text;
-using Web.Common;
 using Web.Services;
+
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -143,21 +143,115 @@ namespace Web.Areas.Admin.Controllers
 
         }
 
-        // xuất bảng điểm của lớp học
-        public async Task<IActionResult> ExportExcelTranscript(int GroupId)
+        //Export the list of scores for a class with all students and their completed exams
+        public async Task<IActionResult> ExportExcelTranscript(int groupId)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Add this line
 
-            var group = await _repo.GetOneAsync<Group>(x => x.Id == GroupId);
+            var group = await _repo.GetOneAsync<Group>(x => x.Id == groupId);
             if (group == null)
             {
                 return NotFound();
             }
 
-            return Ok();
+            // Get the list of students and their exam results
+            var results = await _db.Result
+                .Where(x => x.exam.handOutExams.Any(g => g.GroupId == groupId))
+                .Join(_db.Users,
+                    r => r.UserId,
+                    u => u.Id,
+                    (r, u) => new { r, u })
+                .Select(x => new
+                {
+                    x.r.exam.Title,
+                    x.u.MSSV,
+                    x.u.FullName,
+                    x.r.TestScores,
+                    ClassName = group.GroupName // Assuming the group name is the class name
+                })
+                .ToListAsync();
+
+
+            if (results.Count == 0)
+            {
+                return Ok(new
+                {
+                    success = false,
+                    message = "không có bài thi nào"
+                });
+            }
+
+            var examTitles = results.Select(x => x.Title).Distinct().ToList();
+
+            try
+            {
+                // Create a new Excel package
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("Transcript");
+
+                    // Add headers
+                    worksheet.Cells[1, 1].Value = "MSSV";
+                    worksheet.Cells[1, 2].Value = "Họ Tên";
+                    worksheet.Cells[1, 3].Value = "Tên Lớp";
+                    for (int i = 0; i < examTitles.Count; i++)
+                    {
+                        worksheet.Cells[1, i + 4].Value = examTitles[i];
+                    }
+
+                    // Add data
+                    var students = results.GroupBy(r => new { r.MSSV, r.FullName, r.ClassName }).ToList();
+                    for (int i = 0; i < students.Count; i++)
+                    {
+                        var student = students[i].Key;
+                        worksheet.Cells[i + 2, 1].Value = student.MSSV;
+                        worksheet.Cells[i + 2, 2].Value = student.FullName;
+                        worksheet.Cells[i + 2, 3].Value = student.ClassName;
+
+                        foreach (var result in students[i])
+                        {
+                            var columnIndex = examTitles.IndexOf(result.Title) + 4;
+                            worksheet.Cells[i + 2, columnIndex].Value = result.TestScores;
+                        }
+
+                    }
+
+                    // Format the header
+                    using (var range = worksheet.Cells[1, 1, 1, examTitles.Count + 3])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                        range.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    }
+
+                    // Add borders and color to all cells
+                    using (var range = worksheet.Cells[1, 1, students.Count + 1, examTitles.Count + 3])
+                    {
+                        range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.White);
+                    }
+
+                    // Auto-fit columns
+                    worksheet.Cells.AutoFitColumns();
+
+                    // Convert the package to a byte array
+                    var fileContents = package.GetAsByteArray();
+
+                    // Return the Excel file
+                    return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Transcript.xlsx");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
         }
-
-
-
 
     }
 }

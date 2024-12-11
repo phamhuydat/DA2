@@ -311,6 +311,19 @@ namespace Web.Controllers
                     EndTime = check == null ? DateTime.Now.AddMinutes(exam.WorkTime) : check.StartTime.AddMinutes(exam.WorkTime),
                 };
 
+
+                if (exam.MixQuestion)
+                {
+                    questions = questions.OrderBy(x => Guid.NewGuid()).ToList();
+                }
+                if (exam.MixAnswer)
+                {
+                    foreach (var question in questions)
+                    {
+                        question.answers = question.answers.OrderBy(x => Guid.NewGuid()).ToList();
+                    }
+                }
+
                 return Ok(new { examVM, questions });
             }
             catch (Exception ex)

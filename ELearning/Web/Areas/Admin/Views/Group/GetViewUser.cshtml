@@ -1,6 +1,4 @@
-﻿@model IEnumerable<Web.Areas.Admin.ViewModels.user.ListUserVM>
-
-@{
+﻿@{
     ViewBag.Title = "Danh sách sinh viên";
 }
 
@@ -37,7 +35,8 @@
                                         Xuất danh sách lớp
                                     </button>
 
-                                    <button type="button" class="btn btn-primary">
+                                    <button type="button" class="btn btn-primary"
+                                            x-on:click="ExportExcelResultGroup()">
                                         <i class="ri-file-3-fill align-bottom me-1"></i>
                                         Xuất bảng điểm
                                     </button>

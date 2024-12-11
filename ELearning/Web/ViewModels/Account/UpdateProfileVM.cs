@@ -5,8 +5,9 @@ using System.Runtime.CompilerServices;
 namespace Web.ViewModels.Account
 {
     public class UpdateProfileVM
-
     {
+
+        public int Id { get; set; }
         public string Username { get; set; }
         [MaxLength(DB.AppUser.FULLNAME_LENGTH)]
         public string fullname { get; set; }

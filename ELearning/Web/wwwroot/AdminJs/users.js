@@ -99,7 +99,6 @@ document.addEventListener("alpine:init", () => {
             if (!this.searchTerm) {
                 return this._list;
             }
-            console.log(this.searchTerm)
 
             return this._list.filter(item =>
                 item.mssv.toLowerCase().includes(this.searchTerm.toLowerCase()) ||

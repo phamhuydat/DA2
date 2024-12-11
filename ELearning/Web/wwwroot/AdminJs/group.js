@@ -321,5 +321,49 @@ document.addEventListener("alpine:init", () => {
                 })
         },
 
+        ExportExcelResultGroup() {
+            fetch(`/Admin/File/ExportExcelTranscript?groupId=${this.groupId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        if (response.success === false) {
+                            showNotification({
+                                type: 'danger',
+                                message: "Không có bài thi nào",
+                            });
+                            return;
+                        }
+                        return response.blob();
+                    } else {
+
+                        showNotification({
+                            type: 'danger',
+                            message: "Không có file dowload",
+                        });
+                    }
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'transcript.xlsx'; // Set the file name
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification({
+                        type: 'danger',
+                        message: 'Failed to download file',
+                    });
+                });
+        }
+
     }))
 });

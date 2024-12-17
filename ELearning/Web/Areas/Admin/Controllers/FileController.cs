@@ -9,7 +9,6 @@ using OfficeOpenXml.Style;
 using System.Text;
 using Web.Services;
 
-
 namespace Web.Areas.Admin.Controllers
 {
     public class FileController : AdminBaseController
@@ -142,6 +141,7 @@ namespace Web.Areas.Admin.Controllers
             return Convert.ToBase64String(resultPDF);
 
         }
+
 
         //Export the list of scores for a class with all students and their completed exams
         public async Task<IActionResult> ExportExcelTranscript(int groupId)

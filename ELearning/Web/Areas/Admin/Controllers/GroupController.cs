@@ -197,7 +197,6 @@ namespace Web.Areas.Admin.Controllers
             return Ok(listUser);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> AddUserToGroup(string mssv, [FromBody] GroupDetailAddOrEditVM model)
         {
@@ -262,8 +261,6 @@ namespace Web.Areas.Admin.Controllers
                 data = group.InvitationCode
             });
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> BlockUser(BlockUserVM data)

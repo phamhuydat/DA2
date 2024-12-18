@@ -109,6 +109,7 @@
 
             clearInterval(this.countdownInterval); // Dừng đếm ngược
 
+
             const data = Object.values(this.userAnswers).map(result => ({
                 resultId: parseInt(result.resultId),
                 questionId: parseInt(result.questionId),

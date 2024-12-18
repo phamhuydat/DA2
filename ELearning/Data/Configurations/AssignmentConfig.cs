@@ -9,6 +9,7 @@ namespace Data.Configurations
         public void Configure(EntityTypeBuilder<Assignment> builder)
         {
             builder.HasKey(x => new { x.Id, x.SubjectId, x.UserId });
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.HasOne(x => x.Subject)
                 .WithMany(x => x.Assignments)

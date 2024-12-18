@@ -181,7 +181,7 @@ namespace Web.Controllers
             List<ResQuestionVM> questions = new List<ResQuestionVM>();
             var check = await _repo.GetOneAsync<Result>(x => x.ExamId == id && x.UserId == this.CurrentUserId);
 
-            // nếu người dùng chưa làm bài tạo câu hỏi 
+            // nếu người dùng chưa làm bài => tạo câu hỏi 
             if (check == null)
             {    // kiểm tra dạng bài thi
                 if (exam.IsAutomatic == false)
@@ -301,11 +301,14 @@ namespace Web.Controllers
             // get data ra cho view
             try
             {
+
+
+                var tem = await _repo.GetOneAsync<Result>(x => x.ExamId == id && x.UserId == this.CurrentUserId);
                 var examVM = new ExamDetailsVM
                 {
                     Id = exam.Id,
                     UserName = this.CurrentUserName,
-                    ResultId = check?.Id ?? 0,
+                    ResultId = tem.Id,
                     WorkTime = exam.WorkTime * 60 - (check?.TotalWorkTime ?? 0), // đổi thời gian thành giây
                     StartTime = check == null ? DateTime.Now : check.StartTime,
                     EndTime = check == null ? DateTime.Now.AddMinutes(exam.WorkTime) : check.StartTime.AddMinutes(exam.WorkTime),
@@ -361,8 +364,6 @@ namespace Web.Controllers
                     return StatusCode(500, ex.Message);
                 }
             }
-
-
 
             try
             {

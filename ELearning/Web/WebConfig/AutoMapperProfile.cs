@@ -2,6 +2,7 @@
 using Data.Entities;
 using Web.Areas.Admin.ViewModels.Account;
 using Web.Areas.Admin.ViewModels.AnswerVM;
+using Web.Areas.Admin.ViewModels.AssignmentVM;
 using Web.Areas.Admin.ViewModels.ChapterVM;
 using Web.Areas.Admin.ViewModels.ExamVM;
 using Web.Areas.Admin.ViewModels.GroupDetailVM;
@@ -89,6 +90,14 @@ namespace Web.WebConfig
             // map dữ liệu từ NotifyDetailsVM sang NotificationDetails
             CreateMap<NotifyDetailsVM, NotificationDetails>().ReverseMap();
             CreateMap<NotificationDetails, NotifyDetailsVM>().ReverseMap();
+
+            // map dữ liệu từ AddOrEditAssignmentVM sang Assignment
+            CreateMap<AddOrEditAssignmentVM, Assignment>()
+                .ForMember(vm => vm.SubjectId, opts => opts.MapFrom(entity => entity.SubjectId))
+                .ForMember(vm => vm.UserId, opts => opts.MapFrom(entity => entity.UserId))
+                .ReverseMap();
+
+
 
         }
 
@@ -285,6 +294,14 @@ namespace Web.WebConfig
                 (
                     uEntity => string.Join(", ", uEntity.NotificationDetailsDetails.Select(p => p.Group.GroupName))
                 ))
+                .ReverseMap();
+        });
+        public static MapperConfiguration GetListAssignmentConf = new(mapper =>
+        {
+            mapper.CreateMap<Assignment, ListAssignmentVM>()
+                .ForMember(vm => vm.NameTeacher, opts => opts.MapFrom(entity => entity.Users.FullName))
+                .ForMember(vm => vm.NameSubject, opts => opts.MapFrom(entity => entity.Subject.SubjectName))
+                .ForMember(vm => vm.SubjectCode, opts => opts.MapFrom(entity => entity.Subject.SubjectCode))
                 .ReverseMap();
         });
 

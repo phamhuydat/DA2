@@ -94,6 +94,7 @@ document.addEventListener("alpine:init", () => {
         currentPage: 1,
         itemsPerPage: 10,
         searchTerm: "",
+        searchSubject: "",
 
         get filteredList() {
             if (!this.searchTerm) {
